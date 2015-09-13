@@ -1,0 +1,143 @@
+package model;
+
+import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+public class TestParent {
+	
+	private Parent root1, root2, gp1, gp2, p1, p2, p3, p4;
+	private Child c1, c2, c3, c4, c5, c6, c7, c8;
+
+	@Before
+	public void setUp() throws Exception {
+		root1 = new Parent("Root 1", 16777216, 0);
+		gp1 = new Parent("Great parent 1", 4096, 1);
+		gp2 = new Parent("Great parent 2", 4096, 1);
+		p1 = new Parent("Parent 1", 2048, 2);
+		p2 = new Parent("Parent 2", 2048, 2);
+		p3 = new Parent("Parent 3", 2048, 2);
+		p4 = new Parent("Parent 4", 2048, 2);
+		c1 = new Child("Children 1", 1024, 3);
+		c2 = new Child("Children 2", 1024, 3);
+		c3 = new Child("Children 3", 1024, 3);
+		c4 = new Child("Children 4", 1024, 3);
+		c5 = new Child("Children 5", 1024, 3);
+		c6 = new Child("Children 6", 1024, 3);
+		c7 = new Child("Children 7", 1024, 3);
+		c8 = new Child("Children 8", 1024, 3);
+		
+		p1.addContents(c1);
+		p1.addContents(c2);
+		p2.addContents(c3);
+		p2.addContents(c4);
+		p3.addContents(c5);
+		p3.addContents(c6);
+		p4.addContents(c7);
+		p4.addContents(c8);
+		
+		gp1.addContents(p1);
+		gp1.addContents(p2);
+		gp2.addContents(p3);
+		gp2.addContents(p4);
+		
+		root1.addContents(gp1);
+		root1.addContents(gp2);
+	}
+
+	@Test
+	public void testContents() {
+		ArrayList<Node> root1Contents = new ArrayList<Node>();
+		ArrayList<Node> gp1Contents = new ArrayList<Node>();
+		ArrayList<Node> gp2Contents = new ArrayList<Node>();
+		ArrayList<Node> p1Contents = new ArrayList<Node>();
+		ArrayList<Node> p2Contents = new ArrayList<Node>();
+		ArrayList<Node> p3Contents = new ArrayList<Node>();
+		ArrayList<Node> p4Contents = new ArrayList<Node>();
+		
+		p1Contents.add(c1);
+		p1Contents.add(c2);
+		assertEquals(p1.getContents(), p1Contents);
+		p2Contents.add(c3);
+		p2Contents.add(c4);
+		assertEquals(p2.getContents(), p2Contents);
+		p3Contents.add(c5);
+		p3Contents.add(c6);
+		assertEquals(p3.getContents(), p3Contents);
+		p4Contents.add(c7);
+		p4Contents.add(c8);
+		assertEquals(p4.getContents(), p4Contents);
+		gp1Contents.add(p1);
+		gp1Contents.add(p2);
+		assertEquals(gp1.getContents(), gp1Contents);
+		gp2Contents.add(p3);
+		gp2Contents.add(p4);
+		assertEquals(gp2.getContents(), gp2Contents);
+		root1Contents.add(gp1);
+		root1Contents.add(gp2);
+		assertEquals(root1.getContents(), root1Contents);
+	
+	}
+	
+	@Test
+	public void testParentEmpty() {
+		root2 = new Parent("Root 2", 16777216, 0);
+		assertTrue(root2.parentEmpty());
+		assertFalse(root1.parentEmpty());
+		
+	}
+	
+	@Test
+	public void testSize() {
+		root1.setTotalSize(16777216);
+		assertEquals(root1.getSize(), 16777216);
+		gp1.setTotalSize(4096);
+		assertEquals(gp1.getSize(), 4096);
+		gp2.setTotalSize(4096);
+		assertEquals(gp2.getSize(), 4096);
+	}
+	
+	@Test
+	public void testToString() {
+		assertEquals(root1.toString(), 
+			"-Great parent 1 (0)0 1\n" +
+				"-	-Parent 1 (0)0 2\n" +
+					"-	-	-Children 1 (1024)0 3\n" +
+					"-	-	-Children 2 (1024)0 3\n" +
+				"-	-Parent 2 (0)0 2\n" +
+					"-	-	-Children 3 (1024)0 3\n" +
+					"-	-	-Children 4 (1024)0 3\n" +
+			"-Great parent 2 (0)0 1\n" +
+				"-	-Parent 3 (0)0 2\n" +
+					"-	-	-Children 5 (1024)0 3\n" +
+					"-	-	-Children 6 (1024)0 3\n" +
+				"-	-Parent 4 (0)0 2\n" +
+					"-	-	-Children 7 (1024)0 3\n" +
+					"-	-	-Children 8 (1024)0 3\n");
+	}
+	
+	@Test
+	public void testGetNumberOfChildren() {
+		assertEquals(root1.getNumberOfChildren(), 2);
+		assertEquals(gp1.getNumberOfChildren(), 2);
+		assertEquals(gp2.getNumberOfChildren(), 2);
+		assertEquals(p1.getNumberOfChildren(), 2);
+		assertEquals(p2.getNumberOfChildren(), 2);
+		assertEquals(p3.getNumberOfChildren(), 2);
+		assertEquals(p4.getNumberOfChildren(), 2);
+	}
+	
+	@Test
+	public void testGetNumberOfFolders() {
+		assertEquals(root1.getNumberOfFolders(), 6);
+	}
+	
+	@Test
+	public void testGetNumberOfFiles() {
+		assertEquals(root1.getNumberOfFiles(), 8);
+	}
+}

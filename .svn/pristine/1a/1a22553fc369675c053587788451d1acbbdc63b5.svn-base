@@ -1,0 +1,42 @@
+package utility;
+import java.io.File;
+
+import model.*;
+
+
+public class Controller {
+
+	private Algorithm algorithm;
+	private File root;
+	
+	public Controller(File root, int alg){
+		this.root = root;
+		setAlgorithm(alg);
+		
+	}
+	
+	
+	
+	private void setAlgorithm(int alg){
+		
+		switch(alg){
+		case 1:
+			algorithm = new SliceAndDice();
+		default:
+			algorithm = new SliceAndDice();
+		}
+	}
+	
+	public void runAlgorithm(){
+		
+	}
+	
+	public void buildTreeMap(){
+		
+	}
+	
+	public DataTree getDataTree(){
+		return DataTree.getInstance(root);
+	}
+	
+}

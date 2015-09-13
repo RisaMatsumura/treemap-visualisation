@@ -1,0 +1,69 @@
+package model;
+
+import static org.junit.Assert.*;
+
+import java.io.File;
+import java.util.ArrayList;
+
+import org.junit.Before;
+import org.junit.Test;
+
+public class TestDataTree {
+	private static File file;
+	private DataTree dt;
+	
+	ArrayList<Node> children, grandchildren1, grandchildren2, greatgrandchildren1, greatgrandchildren2;
+	Parent root, c1, c2, gc1, gc2;
+	Child ggc1, ggc2;
+	
+	@Before
+	public void setUp() throws Exception {
+		file = new File("H:/CS2010 Group Project/Prototype/src/model/TestDirectory");
+		dt = DataTree.getInstance(file);
+		
+		
+		root = dt.getTop();
+		children = new ArrayList<Node>();
+		children = root.getContents();
+		c1 = (Parent) children.get(0);
+		c2 = (Parent) children.get(1);
+		
+		grandchildren1 = new ArrayList<Node>();
+		grandchildren2 = new ArrayList<Node>();
+		grandchildren1 = c1.getContents();
+		grandchildren2 = c2.getContents();
+		gc1 = (Parent) grandchildren1.get(0);
+		gc2 = (Parent) grandchildren2.get(0);
+		
+		greatgrandchildren1 = new ArrayList<Node>();
+		greatgrandchildren2 = new ArrayList<Node>();
+		greatgrandchildren1 = gc1.getContents();
+		greatgrandchildren2 = gc2.getContents();
+		ggc1 = (Child) greatgrandchildren1.get(0);
+		ggc2 = (Child) greatgrandchildren2.get(0);
+	}
+
+	/**
+	 *  Checks if it the test file is working
+	 */
+	@Test
+	public void testFileName() {
+		assertEquals(file.getName(), "TestDirectory");
+		assertEquals(dt.getTop().getName(), "TestDirectory");
+
+	}
+	
+	@Test
+	public void testNumberOfFolders() {
+		assertEquals(dt.getNumberOfFiles(), 2);
+	}
+	
+	@Test
+	public void testRoot() {
+		
+		assertEquals(ggc1.getDepth(), 1);
+		assertEquals(ggc2.getDepth(), 1);
+
+	}
+
+}

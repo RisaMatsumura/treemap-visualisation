@@ -1,0 +1,72 @@
+package TreeMap;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.util.ArrayList;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+public class TreeMap extends JPanel{
+	
+	private ArrayList<Shape> listOfShapes;
+	
+	public void addShape(Shape theShape){
+		listOfShapes.add(theShape);
+	}
+
+	
+	public TreeMap(){
+		
+		super();
+		listOfShapes = new ArrayList<Shape>();
+        this.setBackground(Color.WHITE);
+        this.setPreferredSize(new Dimension(670, 354));
+		System.out.println(this.getHeight());
+		System.out.println(this.getWidth());
+	}
+	
+	public void paintComponent(Graphics g){
+		
+		
+		super.paintComponent(g);
+		for (int i = 0 ; i<listOfShapes.size(); i++){
+		int height = ((Rectangle) listOfShapes.get(i)).getHeight();
+		int width = ((Rectangle) listOfShapes.get(i)).getWidth();
+		int x = ((Rectangle) listOfShapes.get(i)).getX();
+		int y = ((Rectangle) listOfShapes.get(i)).getY();
+		if (i%2==1){
+			g.setColor(Color.BLUE);
+			g.fillRect(x, y, width, height);
+		}else{
+			g.setColor(Color.WHITE);
+			g.drawRect(x, y, width, height);
+		}
+		//g.fillRect(10, 10, 100, 100);
+		
+		g.fillRect(x, y, width, height);
+		/*
+		try {
+			Thread.currentThread().sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		
+		}
+		*/
+		}
+	}
+	
+	public TreeMap get(){
+		return this;
+	}
+	public ArrayList<Shape> getListOfShapes(){
+		return listOfShapes;
+	}
+	
+	
+	
+
+
+}

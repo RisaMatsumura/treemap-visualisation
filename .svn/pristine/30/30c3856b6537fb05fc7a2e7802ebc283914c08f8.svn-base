@@ -1,0 +1,194 @@
+package model;
+
+import java.io.File;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+
+/**
+ * Represents a Tree Data Structure of Nodes by a top Node.
+ * 
+ * @author Jonas Pikiotas
+ * @author Lai Chin Chung Louis
+ */
+public class DataTree
+{
+	private static DataTree instance;
+	private Parent top;
+	
+	
+	/**
+	 * Default constructor to create a DataTree.
+	 * 
+	 * @param top the instance of Parent to set
+	 */
+	private DataTree(Parent top)
+	{
+		this.top = top;
+	}
+	
+	
+	/**
+	 * Converts all information contained in the data tree to a string.
+	 * 
+	 * @return the data structure as a string 
+	 */
+	public String printAllData()
+	{
+		return top.toString();
+	}
+	
+	
+	/**
+	 * Returns the top node of the tree.
+	 * 
+	 * @return the top node of the Tree
+	 */
+	public Parent getTop()
+	{
+		return top;
+	}
+	
+	
+	/**
+	 * Sets the top node of the tree
+	 * 
+	 * @param top The top node
+	 */
+	public void setTop(Parent top)
+	{
+		this.top = top;
+	}
+	
+	
+	/**
+	 * Returns the size of the root folder in an easily understandable format.
+	 * 
+	 * @return 
+	 */
+	public String getRootFolderSize()
+	{
+		long rootFolderSize = top.getSize();
+		NumberFormat nf = new DecimalFormat();
+		nf.setMaximumFractionDigits(2);
+		
+		final double kb = 1024;
+		final double mb = 1024 * kb;
+		final double gb = 1024 * mb;
+		final double tb = 1024 * gb;
+		 
+		if(rootFolderSize < kb)
+		{
+			return nf.format(rootFolderSize) + " Byte(s)";
+		}
+		else if(rootFolderSize < mb)
+		{
+			return nf.format(rootFolderSize/kb) + " KB";
+		}
+		else if(rootFolderSize < gb)
+		{
+			return nf.format(rootFolderSize/mb) + " MB";
+		}
+		else if(rootFolderSize < tb)
+		{
+			return nf.format(rootFolderSize/gb) + " GB";
+		}
+		else
+		{
+			return nf.format(rootFolderSize/tb) + " TB";
+		}
+	}
+	
+	
+	/**
+	 * Returns the total number of folders represented in the tree.
+	 * 
+	 * @return total number of folders
+	 */
+	public int getNumberOfFolders()
+	{
+		return top.getNumberOfFolders();
+	}
+	
+	
+	/**
+	 * Returns the total number of files represented in the tree.
+	 * 
+	 * @return total number of files
+	 */
+	public int getNumberOfFiles()
+	{
+		return top.getNumberOfFiles();
+	}
+	
+
+	/**
+	 * 
+	 * 
+	 * @param rootFile
+	 * @return
+	 */
+	private static Parent buildTree(File rootFile)
+	{
+		long parentTotalSize = 0;
+		// create a new parent object with the parameter rootFile
+		Parent parent = new Parent(rootFile.getName(), rootFile.length(), true);
+		// goes through all the files in the rootFile, check if the file is a file or a folder
+		for (int i = 0; i < rootFile.listFiles().length; i++)
+		{
+			if (rootFile.listFiles()[i].isFile())
+			{
+				// add the file size
+				parentTotalSize += rootFile.listFiles()[i].length();
+				// create a Child object and add to the parent
+				parent.addContents(new Child(rootFile.listFiles()[i].getName(),
+						rootFile.listFiles()[i].length(), false));
+			}
+			else
+			{
+				// Recursion
+				Parent newParent = buildTree(rootFile.listFiles()[i]);
+				parentTotalSize += newParent.getSize();
+				parent.addContents(newParent);
+			}
+		}
+		
+		//to add the percentage
+		for (int i = 0; i < parent.getNumberOfChildren(); i++)
+		{			
+			double currentChildSize = parent.getContents().get(i).getSize();
+			parent.getContents().get(i).setPercentage(currentChildSize/(double)parentTotalSize);
+		}
+		parent.setTotalSize(parentTotalSize);
+		return parent;
+	}
+	
+	
+	/**
+	 * 
+	 * @param rootFile
+	 * @return
+	 */
+	public static DataTree getInstance(File rootFile)
+	{
+		//sort the tree
+		instance = new DataTree(buildTree(rootFile));
+		return instance;
+	}
+	
+	/**
+	 * Still needs to be implemented!!
+	 * @param keyword
+	 * @return
+	 */
+	public ArrayList<Node> serachNode(String keyword){
+		ArrayList<Node> matchingNodes = new ArrayList<Node>();
+		
+		Node currentNode = this.getTop();
+		if (currentNode instanceof Parent) {
+			Parent currentParent = (Parent) currentNode;
+			ArrayList<Node> children = currentParent.getContents();
+		}
+		return matchingNodes;
+	}
+}

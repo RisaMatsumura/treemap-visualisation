@@ -1,0 +1,175 @@
+package utility;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JFrame;
+
+import TreeMap.*;
+import model.*;
+
+/**
+ * 
+ * @author
+ *
+ */
+public class SliceAndDice extends Algorithm{
+
+	protected int diffLayerB=0;
+
+	
+	public SliceAndDice (DataTree theDataTree, TreeMap treeMap, boolean nested)
+	{
+		dataTree = theDataTree;
+		this.treeMap = treeMap;
+		if (nested){
+			diffLayerB=4;
+		}
+		//result = new ArrayList<int[]>();
+	}
+	/*
+	private ArrayList<int []> divideAll(DataTree theDataTree){
+		Parent top = theDataTree.getTop();
+		for (int i=0; i<top.getNumberOfChildren(); i++){
+			double childPercentage = top.getContents().get(i).getPercentage();
+
+		}
+	}
+
+	private int [] dividOne(int X, int Y, int height, int width, double percentage, Boolean isOdd){
+
+		if (isOdd){
+			int [] oneRectangle = {X, Y, height, (int) (width*percentage)};
+			return oneRectangle;
+		}else{
+			int [] oneRectangle = {X, Y, (int) (height*percentage), width};
+			return oneRectangle;
+		}
+	}
+
+
+	public ArrayList<int []> getData(){
+
+
+		return 
+	}
+	 */
+	
+	/**
+	 * 
+	 */
+	public TreeMap runAlgorithm(){
+		applyRule (2, 2, width, height, Sorter.sort(dataTree.getTop()), true);
+		return treeMap;
+
+	}
+
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 * @param node
+	 * @param isOdd
+	 */
+	private void applyRule(int x, int y, int width, int height, Node node, boolean isOdd)
+	{
+		List<Node> children = ((Parent) node).getContents();
+		int currentWidth = width;
+		int currentHeight = height;
+		int currentX = x;
+		int currentY = y;
+
+
+		for(Node child : children)
+		{
+			Rectangle main;
+			TitleBar title;
+			if(isOdd)
+			{
+				currentWidth = (int) (width * child.getPercentage());		// width x node %
+				if (currentWidth>1){
+						main = new Rectangle(currentX+sameLayerB, currentY+sameLayerB, currentWidth-sameLayerB-sameLayerB, currentHeight-sameLayerB-sameLayerB, child.getName(), child.getNodeSize(), child.getDepth());
+						treeMap.addShape(child.getDepth(), main);
+						
+						if(currentHeight>14){
+						title = new TitleBar(currentX+sameLayerB+diffLayerB, currentY+sameLayerB+diffLayerB+10, currentWidth-sameLayerB-sameLayerB, 10, child.getName(), child.getNodeSize(), child.getDepth());
+						treeMap.addShape(child.getDepth(), title);
+						}
+					
+					if(child instanceof Parent)
+					{
+						applyRule(currentX+diffLayerB, currentY+diffLayerB, currentWidth-diffLayerB-diffLayerB, currentHeight-diffLayerB-diffLayerB, child, !(isOdd));
+					}
+					currentX += currentWidth;
+				}
+			}
+			else if(!isOdd)
+			{
+				currentHeight = (int) (height * child.getPercentage());
+				if (currentHeight>1){
+					
+						main = new Rectangle(currentX+sameLayerB, currentY+sameLayerB, currentWidth-sameLayerB-sameLayerB, currentHeight-sameLayerB-sameLayerB, child.getName(), child.getNodeSize(), child.getDepth());
+						treeMap.addShape(child.getDepth(), main);
+						if(currentHeight>14){
+						title = new TitleBar(currentX+sameLayerB+diffLayerB, currentY+sameLayerB+diffLayerB+10, currentWidth-sameLayerB-sameLayerB, 10, child.getName(), child.getNodeSize(), child.getDepth());
+						treeMap.addShape(child.getDepth(), title);
+						}
+					
+					if(child instanceof Parent)
+					{
+						applyRule(currentX+diffLayerB, currentY+diffLayerB, currentWidth-diffLayerB*2, currentHeight-diffLayerB*2, child, !(isOdd));
+					}
+					currentY += currentHeight;
+				}
+			}
+
+
+
+		}
+	}
+
+	public static void main(String arg[]){
+		File file = new File("H:/workspace/Prototype/src");
+		TreeMap treeMap = new TreeMap("Black and white");
+		SliceAndDice sliceNDice = new SliceAndDice(DataTree.getInstance(file), treeMap, true);
+		sliceNDice.runAlgorithm();
+		for (int i = 0; i<treeMap.getListOfShapes().size(); i++){
+			System.out.println(treeMap.getListOfShapes().get(i));
+			//System.out.println(treeMap.getListOfShapes().get(i).getY());
+		}
+
+		JFrame frame = new JFrame();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.add(treeMap.get());
+		frame.setSize(700, 400);
+		frame.pack();
+		frame.setVisible(true);
+
+	}
+
+
+
+
+	/*
+		// Method 2: displaying a treemap by drawing borders
+		int startPosition = 0;
+		int numOfChildren = tree.getRootElement().getNumberOfChildren();
+		List<Node> children = tree.getRootElement().getChildren();
+
+		Border[] borders = new Border[numOfChildren-1];
+		for(int i = 0; i < numOfChildren-1; i++) {
+			Node child = children.get(i);
+			startPosition += (int) (1000 * child.getRatio());
+
+			borders[i] = new Border(startPosition, 0, 1, 500);
+			borders[i].makeVisible();
+
+		}
+	 */
+}
+
+
+

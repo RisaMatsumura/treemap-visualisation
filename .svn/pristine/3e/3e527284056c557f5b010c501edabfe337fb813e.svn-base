@@ -1,0 +1,49 @@
+package utility;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+
+import model.*;
+
+
+public class Sorter{
+
+	public static Parent sort(Parent topParent){
+		ArrayList<Node> current = topParent.getContents();
+		current = sortArrayList(current);
+		for (int i=0; i<current.size(); i++){
+			
+			if (current.get(i) instanceof Parent){
+			sort((Parent)current.get(i));
+			}
+			
+		}
+		return topParent;
+	}
+	
+	private static ArrayList<Node> sortArrayList(ArrayList<Node> allChild){
+		Collections.sort(allChild);
+		return allChild;
+	}
+	public static void main(String arg[]){
+		File file = new File("H:/CS2150LabCode/CS2150/AnimatedPerson");
+		for (int i=0; i<10; i++){
+			sortArrayList(DataTree.getInstance(file).getTop().getContents());
+		System.out.println(DataTree.getInstance(file).getTop().getContents().get(i).getName());
+		}
+	}
+	/*
+	public static <Node extends Comparable<Node>> void sort (ArrayList<Node> allChildren){
+		Node min = allChildren.get(0);
+		Node current;
+		for (int i=0; i<allChildren.size()-1; i++){
+			current = allChildren.get(i);
+			if (current.compareTo(min)>=0){
+				
+			}
+			
+		}
+	}
+*/
+}
+

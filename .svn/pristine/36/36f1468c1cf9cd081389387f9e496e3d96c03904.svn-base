@@ -1,0 +1,42 @@
+package model;
+
+import static org.junit.Assert.*;
+
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+/**
+ * This class tests if child objects functions properly.
+ * @author Risa Matsumura
+ *
+ */
+public class TestChild {
+	private Leaf c1, c2, c3, c4;
+
+	@Before
+	public void setUp() throws Exception {
+		c1 = new Leaf("child 1", 10, 0);
+		c2 = new Leaf("child 2", 1024, 10);
+		c3 = new Leaf("child 3", 1048576, 1000);
+		c4 = new Leaf("child 3", 1073741824, 1000);
+	}
+
+	@Test
+	public void testToString() {
+		assertEquals(c1.toString(), "Name: child 1, Size: 10");
+		assertEquals(c2.toString(), "Name: child 2, Size: 1024");
+		assertEquals(c3.toString(), "Name: child 3, Size: 1048576");
+		assertEquals(c4.toString(), "Name: child 3, Size: 1073741824");
+	}
+	
+	@Test
+	public void testGetNodeSize() {
+		assertEquals(c1.getNodeSize(), "10 Byte(s)");
+		assertEquals(c2.getNodeSize(), "1 KB");
+		assertEquals(c3.getNodeSize(), "1 MB");
+		assertEquals(c4.getNodeSize(), "1 GB");
+	
+	}
+
+}

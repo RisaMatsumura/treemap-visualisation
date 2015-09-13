@@ -1,0 +1,212 @@
+package utility;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JFrame;
+
+import TreeMap.*;
+import model.*;
+
+public class Strip implements Algorithm{
+
+	int height = 348;
+	int width = 666;
+	private DataTree dataTree;
+	private TreeMap treeMap;
+	
+	int sameLayerBTop=1;
+	int sameLayerBBot=1;
+	int sameLayerBLeft=1;
+	int sameLayerBRight=1;
+	
+	int diffLayerBTop=4;
+	int diffLayerBBot=4;
+	int diffLayerBLeft=4;
+	int diffLayerBRight=4;
+	/*
+	int diffLayerBTop=10;
+	int diffLayerBBot=4;
+	int diffLayerBLeft=4;
+	int diffLayerBRight=4;
+*/
+	public Strip (DataTree theDataTree, TreeMap treeMap)
+	{
+		dataTree = theDataTree;
+		this.treeMap = treeMap;
+		//result = new ArrayList<int[]>();
+	}
+	
+	public TreeMap runAlgorithm(){
+		applyRule (2, 2, width, height, Sorter.sort(dataTree.getTop()));
+		return treeMap;
+
+	}
+
+
+	public void applyRule(int x, int y, int width, int height, Node node)
+	{
+		List<Node> children = ((Parent) node).getContents();
+		children.add(new Child("",0, false));
+		int currentWidth = width;
+		int currentHeight = height;
+		int currentX = x;
+		int currentY = y;
+		int nowX = x;
+		int nowY = y;
+		int count=0;
+		int previous=0;
+		int marker=0;
+		
+
+		double totalArea=0;
+		double firstArea=0;
+		double oldRatio =1;
+		double fixD =0;
+		
+		boolean drawing=false;
+		
+		while (count<children.size()){
+			int changedWidth=0;
+			int changedHeight=0;
+			//System.out.println("\ncount: "+count+" previous: "+previous+" marker: "+marker);
+			Node child = children.get(count);
+			double area = width*height*child.getPercentage();
+			
+			if(count==marker){
+				firstArea=area;
+				fixD = fix(currentHeight, currentWidth, firstArea);
+			}
+			if(!drawing){
+				totalArea += area;
+				double fixDNow = fixD*firstArea/totalArea;
+				double nfixD = firstArea/fixDNow;
+				double newRatio = correctedRatio(fixDNow/nfixD);
+				//System.out.println("fixD: "+fixD+"nfixD: "+nfixD);
+				//System.out.println("currentWidth: "+currentWidth+" currentHeight: "+currentHeight);
+				//System.out.println("fixD: "+fixD+" nfixD: "+nfixD+" newRatio: "+newRatio+" oldRatio: "+oldRatio);
+				if(newRatio<oldRatio){
+					//continue looping
+					oldRatio = newRatio;
+					
+				}else{
+					totalArea-=area;
+					drawing=true;
+					previous=count;
+					count = marker;
+					oldRatio=1;
+					continue;
+					//start drawing
+				}
+			}else{
+				//System.out.println("draw");
+				if(currentHeight==fixD){
+					double nowHeight = currentHeight*area/totalArea;
+					changedWidth = toInt(area/nowHeight);
+					treeMap.addShape(child.getDepth(), new Rectangle(currentX+sameLayerBLeft, nowY+sameLayerBTop, changedWidth-sameLayerBLeft-sameLayerBRight, toInt(nowHeight-sameLayerBTop-sameLayerBBot), child.getName(), child.getNodeSize(), child.getDepth()));
+					if(child instanceof Parent){
+						applyRule(currentX+diffLayerBLeft, nowY+diffLayerBTop, changedWidth-diffLayerBLeft-diffLayerBRight, toInt(nowHeight-diffLayerBTop-diffLayerBBot), child);
+					}
+					//System.out.println(" "+nowX+" "+ nowY+" "+ changedWidth+" "+ nowHeight+" "+child.getName());
+					nowY += nowHeight;
+					
+				}else{
+					double nowWidth = currentWidth*area/totalArea;
+					changedHeight = toInt(area/nowWidth);
+					treeMap.addShape(child.getDepth(), new Rectangle(nowX+sameLayerBLeft, currentY+sameLayerBTop, toInt(nowWidth-sameLayerBTop-sameLayerBBot), changedHeight-2, child.getName(), child.getNodeSize(), child.getDepth()));	
+					if(child instanceof Parent){
+						applyRule(currentX+diffLayerBLeft, nowY+diffLayerBTop, toInt(nowWidth-diffLayerBLeft-diffLayerBRight) , changedHeight-diffLayerBTop-diffLayerBBot , child);
+					}
+					//System.out.println(nowX+" "+ nowY+" "+ nowWidth+" "+ changedHeight+" "+child.getName());
+					nowX += nowWidth;
+					
+				}
+				
+			}
+			//finish drawing
+			if (count==previous-1){
+				currentWidth -= changedWidth;
+				currentHeight -= changedHeight;
+				currentX += changedWidth;
+				currentY += changedHeight;
+				nowY=currentY;
+				nowX=currentX;
+				totalArea=0;
+				marker=previous;
+				drawing = false;
+				fixD=0;
+			}
+			count++;
+		}
+		
+		
+	}
+	
+	private double fix(double height, double width, double area){
+		double ratio1 = correctedRatio(height*height/area);
+		double ratio2 = correctedRatio(width*width/area);
+		if(ratio1<ratio2){
+			return width;
+		}else{
+			return height;
+		}
+	}
+	
+	private double correctedRatio(double ratio){
+		if(ratio>1){
+			return 1/ratio;
+		}else{
+			return ratio;
+		}
+	}
+
+	private int toInt(double doubleNum){
+		return Math.round((float)doubleNum);
+	}
+	
+	public static void main(String arg[]){
+		File file = new File("H:/workspace/Prototype03042013/src");
+		TreeMap treeMap = new TreeMap();
+		Strip sliceNDice = new Strip(DataTree.getInstance(file), treeMap);
+		sliceNDice.runAlgorithm();
+		for (int i = 0; i<treeMap.getListOfShapes().size(); i++){
+			List<Shape> layerNow = treeMap.getListOfShapes().get(i);
+			for (int j=0; j<layerNow.size(); j++){
+				System.out.println("rec"+layerNow.get(j).getHeight()+" "+layerNow.get(j).getWidth());
+			}
+			System.out.println(treeMap.getListOfShapes().get(i));
+
+		JFrame frame = new JFrame();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.add(treeMap.get());
+		frame.setSize(700, 400);
+		frame.pack();
+		frame.setVisible(true);
+
+		}
+	}
+
+
+
+
+	/*
+		// Method 2: displaying a treemap by drawing borders
+		int startPosition = 0;
+		int numOfChildren = tree.getRootElement().getNumberOfChildren();
+		List<Node> children = tree.getRootElement().getChildren();
+
+		Border[] borders = new Border[numOfChildren-1];
+		for(int i = 0; i < numOfChildren-1; i++) {
+			Node child = children.get(i);
+			startPosition += (int) (1000 * child.getRatio());
+
+			borders[i] = new Border(startPosition, 0, 1, 500);
+			borders[i].makeVisible();
+
+		}
+	 */
+}
+
+
+

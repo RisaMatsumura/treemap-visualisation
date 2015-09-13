@@ -1,0 +1,70 @@
+package utility;
+import java.io.File;
+
+import TreeMap.TreeMap;
+
+
+import model.*;
+
+/**
+ * Controller class bring all the parts together and keep reference on objects
+ * create only after the run button is clicked
+ * 
+ * @author Jonas, Louis
+ */
+public class Controller
+{
+	private Algorithm algorithm;
+	private String algorithmName;
+	private TreeMap treeMap;
+	private File root;
+	
+	/**
+	 * Create a Controller object 
+	 * parameter: all the options the users can make when creating a treeMap
+	 */
+	public Controller(File root, String alg, String colourScheme, boolean nested)
+	{
+		this.root = root;
+		treeMap = new TreeMap();
+		setAlgorithm(alg, nested);
+		runAlgorithm(DataTree.getInstance(root));
+	}
+	
+	
+	//method for creating algorithm objects
+	private void setAlgorithm(String alg, boolean nested)
+	{
+		if(alg.equals("Slice and Dice"))
+		{
+			algorithm = new SliceAndDice(DataTree.getInstance(root), treeMap, nested);
+		}
+		else if(alg.equals("Squarified"))
+		{
+			algorithm = new Squarified(DataTree.getInstance(root), treeMap, nested);
+		}
+		else
+		{
+			algorithm = new Strip(DataTree.getInstance(root), treeMap, nested);
+		}
+	}
+	
+	
+	public void runAlgorithm(DataTree theDataTree)
+	{
+		treeMap = algorithm.runAlgorithm();
+	}
+	
+	public DataTree getDataTree(){
+		
+		return DataTree.getInstance(root);
+	}
+
+	public TreeMap getTreeMap()
+	{
+		return treeMap.get();
+	}
+	
+	
+	
+}

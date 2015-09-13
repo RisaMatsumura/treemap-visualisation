@@ -1,0 +1,65 @@
+package Utility;
+import java.io.File;
+
+import Model.*;
+
+public class Controller {
+
+	private DataTree dataTree;
+	private Algorithm algorithm;
+	long rootFolderSize;
+	int numberOfFolders;
+	
+	public Controller(File root){
+		rootFolderSize = 0;
+		numberOfFolders = 0;
+		
+		Parent p = buildTree(root);
+		dataTree = new DataTree(p);
+		dataTree.setNumberOfFolders(numberOfFolders);
+		dataTree.setRootFolderSize(rootFolderSize);
+		
+	}
+	
+	public Parent buildTree(File rootFile) {
+		
+		// create a new parent object with the parameter rootFile
+		Parent parent = new Parent(rootFile.getName(), rootFile.length(), true);
+		// goes through all the files in the rootFile
+		for (int i = 0; i < rootFile.listFiles().length; i++) {
+			// check if the file is a file or a folder
+			if (rootFile.listFiles()[i].isFile()) {
+				// add the file size
+				rootFolderSize += rootFile.listFiles()[i].length();
+				// create a Child object and add to the parent
+				parent.addContents(new Child(rootFile.listFiles()[i].getName(),
+						rootFile.listFiles()[i].length(), false));
+			} else {
+				// if it is a folder,
+				// increment the number of folders
+				numberOfFolders++;
+				// Recursion
+				parent.addContents(buildTree(rootFile.listFiles()[i]));
+			}
+		}
+		parent.setTotalSize(rootFolderSize);
+		return parent;
+	}
+	
+	public void setAlgorithm(Algorithm a){
+		algorithm = a;
+	}
+	
+	public void runAlgorithm(){
+		
+	}
+	
+	public void buildTreeMap(){
+		
+	}
+	
+	public DataTree getDataTree(){
+		return dataTree;
+	}
+	
+}

@@ -1,0 +1,82 @@
+package Model;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
+/**
+ * Represents a Tree Data Structure of Nodes by a top Node.
+ * 
+ * @author Jonas Pikiotas
+ * @author Lai Chin Chung Louis
+ * @version 1.0 
+ */
+
+public class DataTree {
+
+	private Parent top;
+	private long rootFolderSize;
+	private int numberOfFolders;
+	
+	/**
+	 * Default constructor to create a DataTree
+	 * @param top the instance of Parent to set
+	 */
+	public DataTree(Parent top){
+		this.top = top;
+	}
+	
+	/**
+	 * @return the data structure as a string 
+	 */
+	public String printAllData(){
+		return top.toString();
+	}
+	
+	/**
+	 * @return the top node of the Tree
+	 */
+	public Parent getTop(){
+		return top;
+	}
+	
+	public void setTop(Parent top){
+		this.top = top;
+	}
+	
+	public String getRootFolderSize(){
+		
+		NumberFormat nf = new DecimalFormat();
+		nf.setMaximumFractionDigits(2);
+		
+		final double kb = 1024;
+		final double mb = 1024 * kb;
+		final double gb = 1024 * mb;
+		final double tb = 1024 * gb;
+		
+		if(rootFolderSize < kb){
+			return nf.format(rootFolderSize) + " Byte(s)";
+		} else if(rootFolderSize < mb){
+			return nf.format(rootFolderSize/kb) + " KB";
+		} else if(rootFolderSize < gb){
+			return nf.format(rootFolderSize/mb) + " MB";
+		} else if(rootFolderSize < tb){
+			return nf.format(rootFolderSize/gb) + " GB";
+		} else{
+			return nf.format(rootFolderSize/tb) + " TB";
+		}
+		
+	}
+	
+	public void setRootFolderSize(long size){
+		rootFolderSize = size;
+	}
+	
+	public int getNumberOfFolders(){
+		return numberOfFolders;
+	}
+	
+	public void setNumberOfFolders(int num){
+		numberOfFolders = num;
+	}
+	
+}

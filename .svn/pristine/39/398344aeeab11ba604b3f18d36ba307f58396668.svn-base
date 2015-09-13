@@ -1,0 +1,120 @@
+package model;
+
+import java.io.File;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
+import utility.Sorter;
+
+/**
+ * Represents a Tree Data Structure of Nodes by a top Node.
+ * 
+ * @author Jonas Pikiotas
+ * @author Lai Chin Chung Louis
+ * @version 1.0 
+ */
+
+public class DataTree {
+
+	private static DataTree instance;
+	private Parent top;
+	
+	/**
+	 * Default constructor to create a DataTree
+	 * @param top the instance of Parent to set
+	 */
+	private DataTree(Parent top){
+		this.top = top;
+	}
+	
+	/**
+	 * @return the data structure as a string 
+	 */
+	public String printAllData(){
+		return top.toString();
+	}
+	
+	/**
+	 * @return the top node of the Tree
+	 */
+	public Parent getTop(){
+		return top;
+	}
+	
+	public void setTop(Parent top){
+		this.top = top;
+	}
+	
+	public String getRootFolderSize(){
+		long rootFolderSize = top.getSize();
+		NumberFormat nf = new DecimalFormat();
+		nf.setMaximumFractionDigits(2);
+		
+		final double kb = 1024;
+		final double mb = 1024 * kb;
+		final double gb = 1024 * mb;
+		final double tb = 1024 * gb;
+		 
+		if(rootFolderSize < kb){
+			return nf.format(rootFolderSize) + " Byte(s)";
+		} else if(rootFolderSize < mb){
+			return nf.format(rootFolderSize/kb) + " KB";
+		} else if(rootFolderSize < gb){
+			return nf.format(rootFolderSize/mb) + " MB";
+		} else if(rootFolderSize < tb){
+			return nf.format(rootFolderSize/gb) + " GB";
+		} else{
+			return nf.format(rootFolderSize/tb) + " TB";
+		}
+		
+	}
+	
+	
+	public int getNumberOfFolders(){
+		return top.getNumberOfFolders();
+	}
+	
+	public int getNumberOfFiles(){
+		return top.getNumberOfFiles();
+	}
+	
+
+	private static Parent buildTree(File rootFile) {
+		long parentTotalSize = 0;
+		// create a new parent object with the parameter rootFile
+		Parent parent = new Parent(rootFile.getName(), rootFile.length(), true);
+		// goes through all the files in the rootFile, check if the file is a file or a folder
+		for (int i = 0; i < rootFile.listFiles().length; i++) {
+			
+			if (rootFile.listFiles()[i].isFile()) {
+				// add the file size
+				parentTotalSize += rootFile.listFiles()[i].length();
+				// create a Child object and add to the parent
+				parent.addContents(new Child(rootFile.listFiles()[i].getName(),
+						rootFile.listFiles()[i].length(), false));
+			} else {
+				// Recursion
+				Parent newParent = buildTree(rootFile.listFiles()[i]);
+				parentTotalSize += newParent.getSize();
+				parent.addContents(newParent);
+			}
+		}
+		
+		//to add the percentage
+		for (int i = 0; i < parent.getNumberOfChildren(); i++) {
+			
+			double currentChildSize = parent.getContents().get(i).getSize();
+			parent.getContents().get(i).setPercentage(currentChildSize/(double)parentTotalSize);
+		}
+		parent.setTotalSize(parentTotalSize);
+		return parent;
+	}
+	
+	public static DataTree getInstance(File rootFile){
+		//sort the tree
+			Parent top = Sorter.sort(buildTree(rootFile));
+			instance = new DataTree(top);
+			return instance;
+	}
+
+}

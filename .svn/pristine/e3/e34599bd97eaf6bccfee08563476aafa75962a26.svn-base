@@ -1,0 +1,54 @@
+package utility;
+import java.io.File;
+
+import TreeMap.TreeMap;
+
+
+import model.*;
+
+
+public class Controller {
+
+	private Algorithm algorithm;
+	private TreeMap treeMap;
+	private File root;
+	
+	public Controller(File root, int alg){
+		this.root = root;
+		treeMap = new TreeMap();
+		setAlgorithm(alg);
+		runAlgorithm(DataTree.getInstance(root));
+		
+	}
+	
+	
+	
+	private void setAlgorithm(int alg){
+		
+		switch(alg){
+		case 1:
+			algorithm = new SliceAndDice(DataTree.getInstance(root), treeMap);
+		default:
+			algorithm = new SliceAndDice(DataTree.getInstance(root), treeMap);
+		}
+	}
+	
+	public void runAlgorithm(DataTree theDataTree){
+		algorithm.runAlgorithm();
+		System.out.println("13");
+	}
+	
+	public void buildTreeMap(){
+		
+	}
+	
+	public DataTree getDataTree(){
+		
+		return DataTree.getInstance(root);
+	}
+	
+	public TreeMap getTreeMap(){
+		return treeMap.get();
+	}
+	
+}

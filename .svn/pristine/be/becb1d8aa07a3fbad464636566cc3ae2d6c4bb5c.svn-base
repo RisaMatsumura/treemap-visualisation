@@ -1,0 +1,46 @@
+package TreeMap;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.util.ArrayList;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+public class TreeMap extends JPanel{
+	
+	ArrayList<Shape> listOfShapes;
+	
+	public void addShape(Shape theShape){
+		listOfShapes.add(theShape);
+	}
+
+	
+	public TreeMap(){
+		
+		super();
+		listOfShapes = new ArrayList<Shape>();
+        this.setBackground(Color.GRAY);
+	}
+	
+	public void paintComponent(Graphics g){
+		System.out.println(listOfShapes.size());
+		super.paintComponent(g);
+		int height = ((Rectangle) listOfShapes.get(0)).getHeight();
+		int width = ((Rectangle) listOfShapes.get(0)).getWidth();
+		int x = ((Rectangle) listOfShapes.get(0)).getX();
+		int y = ((Rectangle) listOfShapes.get(0)).getY();
+		
+		g.setColor(Color.BLUE);
+		g.fillRect(x, y, width, height);
+		
+		
+	}
+	
+	public TreeMap get(){
+		return this;
+	}
+	
+
+}

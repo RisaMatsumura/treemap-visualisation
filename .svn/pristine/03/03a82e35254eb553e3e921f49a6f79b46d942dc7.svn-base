@@ -1,0 +1,48 @@
+package TreeMap;
+
+
+/**
+ * Shape class provide a basic object which represent a rectangle.
+ * @author Louis
+ * @author Luke
+ *
+ */
+public class Rectangle extends Shape
+{
+	private int width;
+	private int height;
+	
+	
+	public Rectangle(int x,int y,int width,int height, String loc, String locSize, int depth)
+	{
+		super(x, y, loc, locSize, depth);
+		this.width = width;
+		this.height = height;
+	}
+	
+	public int getWidth()
+	{
+		return width;
+	}
+	
+	
+	public int getHeight()
+	{
+		return height;
+	}
+	
+
+
+	public boolean contains(int eX, int eY)
+	{
+		if(((eX >= super.getX())&&(eX <= (super.getX() + width)))&&((eY >= super.getY())&&(eY <= (super.getY() + height))))
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+}
+

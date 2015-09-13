@@ -1,0 +1,80 @@
+package model;
+
+import static org.junit.Assert.*;
+
+import java.io.File;
+import java.util.ArrayList;
+
+import org.junit.Before;
+import org.junit.Test;
+
+public class TestDataTree {
+	private static File file;
+	private DataTree dt;
+	
+	ArrayList<Node> children, grandchildren1, grandchildren2, greatgrandchildren1, greatgrandchildren2;
+	Parent root, c1, c2, gc1, gc2;
+	Child ggc1, ggc2;
+	
+	@Before
+	public void setUp() throws Exception {
+		file = new File("H:/CS2010 Group Project/Prototype/src/model/TestDirectory");
+		dt = DataTree.getInstance(file);
+		
+		
+		root = dt.getTop();
+		children = new ArrayList<Node>();
+		children = root.getContents();
+		c1 = (Parent) children.get(0);
+		c2 = (Parent) children.get(1);
+		
+		grandchildren1 = new ArrayList<Node>();
+		grandchildren2 = new ArrayList<Node>();
+		grandchildren1 = c1.getContents();
+		grandchildren2 = c2.getContents();
+		gc1 = (Parent) grandchildren1.get(0);
+		gc2 = (Parent) grandchildren2.get(0);
+		
+		greatgrandchildren1 = new ArrayList<Node>();
+		greatgrandchildren2 = new ArrayList<Node>();
+		greatgrandchildren1 = gc1.getContents();
+		greatgrandchildren2 = gc2.getContents();
+		ggc1 = (Child) greatgrandchildren1.get(0);
+		ggc2 = (Child) greatgrandchildren2.get(0);
+	}
+
+	/**
+	 *  Check if it the test file is working
+	 */
+	@Test
+	public void testFileName() {
+		assertEquals(file.getName(), "TestDirectory");
+		assertEquals(dt.getTop().getName(), "TestDirectory");
+
+	}
+	
+	/**
+	 *  Check if it counts the number of folders correctly
+	 */
+	@Test
+	public void testNumberOfFolders() {
+		// 2 files in TestDirectory: ggc1.txt and ggc2.txt
+		assertEquals(dt.getNumberOfFiles(), 2);
+	}
+	
+	/**
+	 *  Check if the depth of each node in the directry is set up correctly
+	 */
+	@Test
+	public void testRoot() {
+		assertEquals(root.getDepth(), 1);
+		assertEquals(c1.getDepth(), 2);
+		assertEquals(c2.getDepth(), 2);
+		assertEquals(gc1.getDepth(), 3);
+		assertEquals(gc2.getDepth(), 3);
+		assertEquals(ggc1.getDepth(), 4);
+		assertEquals(ggc2.getDepth(), 4);
+
+	}
+
+}

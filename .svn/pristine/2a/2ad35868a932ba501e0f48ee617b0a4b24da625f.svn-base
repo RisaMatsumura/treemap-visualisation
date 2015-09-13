@@ -1,0 +1,213 @@
+package model;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+
+/**
+ * Represents a parent Node of the Data Structure.
+ * 
+ * @author Jonas Pikiotas
+ * @author Lai Chin Chung Louis
+ * @version 1.0 
+ */
+public class Parent extends Node
+{
+	private ArrayList<Node> contents;
+	private long totalSize;
+	
+	
+	/**
+	 * Default constructor to create Parent Node with three parameters.
+	 * 
+	 * @param name instance of String
+	 * @param size instance of Long
+	 * @param isParent whether the node is parent or not.
+	 */
+	public Parent(String name, long size, boolean isParent)
+	{
+		super (name, size, isParent);
+		contents = new ArrayList <Node>();
+	}
+	
+	
+	/**
+	 * Add Node to the Data Structure.
+	 * 
+	 * @param theContent instance of Node to add
+	 */
+	public void addContents(Node theContent)
+	{
+		this.setDepth(1);
+		if(theContent.isParent)
+		{
+			setDepthOfDescendants(theContent, 2);
+		}
+		contents.add(theContent);
+	}
+	
+	
+	/**
+	 * Helper method to set depth of descendants, used in addContents method.
+	 * 
+	 * @param node 
+	 * @param level 
+	 */
+	private void setDepthOfDescendants(Node node, int level)
+	{
+		Node currentNode = node;
+		currentNode.setDepth(level);
+		
+		if (currentNode instanceof Parent)
+		{
+			Parent currentParent = (Parent) currentNode;
+			int numberOfChildren = currentParent.getNumberOfChildren();
+			
+			if (numberOfChildren > 0)
+			{
+				for(Node child : currentParent.getContents())
+				{
+					setDepthOfDescendants(child, level+1);
+				}
+			}
+		}
+	}
+	
+	
+	/**
+	 * Returns the children directly related to this parent
+	 * 
+	 * @return the contents of the Data Structure.
+	 */
+	public ArrayList<Node> getContents()
+	{
+		return contents;
+	}
+	
+	
+	/**
+	 * Checks whether the parent has no children
+	 * 
+	 * @return true if empty, false if not
+	 */
+	public boolean parentEmpty()
+	{
+		return contents.isEmpty();
+	}
+	
+	
+	/**
+	 * Sets the total size of the parent
+	 * 
+	 * @param totalSize Total size of this parent
+	 */
+	public void setTotalSize(long totalSize)
+	{
+		this.totalSize = totalSize;
+	}
+	
+	
+	/**
+	 * Return the total size of this parent (i.e. the sum of the sizes of its children)
+	 * 
+	 * @return the total size of the parent
+	 */
+	public long getSize()
+	{
+		return totalSize;
+	}
+	
+	
+	/**
+	 * Return information about this Parent in a readable format
+	 * 
+	 * @return String The information about this Parent as a string
+	 */
+	public String toString()
+	{
+		return toString(contents, "-");
+	}
+	
+	
+	/**
+	 * Returns information about this Parent in a readable format
+	 * 
+	 * @param contents The children of this parent
+	 * @param tab The size of the space that is to be left before each fragment of information
+	 * @return String The information about this Parent as a string
+	 */
+	private String toString(ArrayList <Node> contents, String tab)
+	{
+		NumberFormat nf = new DecimalFormat();
+		nf.setMaximumFractionDigits(4);
+		
+		String allData="";
+		for (int i=0; i<contents.size();i++)
+		{
+			//the contents of the current iteration is added to allData
+			allData += tab + contents.get(i).getName() + " ("+contents.get(i).getSize()+")" + nf.format(contents.get(i).getPercentage()) + " " + contents.get(i).getDepth() + "\n";
+			if (contents.get(i).isParent())
+			{
+				if (!((Parent)contents.get(i)).parentEmpty())
+				{
+					allData+=toString(((Parent) contents.get(i)).getContents(), tab + "\t-");
+				}
+			}
+		}
+		return allData;
+	}
+	
+	
+	/**
+	 * Return the number of children that are directly related to this parent
+	 * 
+	 * @return number of children under this parent
+	 */
+	public int getNumberOfChildren()
+	{
+		return contents.size();
+	}
+	
+	
+	/**
+	 * Return the number of children that are directly related to this parent AND that are also parents themselves
+	 * 
+	 * @return number of folders under this parent
+	 */
+	public int getNumberOfFolders()
+	{
+		int numFolders=0;
+		for (int i=0; i<contents.size(); i++)
+		{
+			if (contents.get(i) instanceof Parent)
+			{
+				numFolders++;
+				numFolders += ((Parent)contents.get(i)).getNumberOfFolders();
+			}
+		}
+		return numFolders;
+	}
+	
+	
+	/**
+	 * Return the number of children that are directly related to this parent AND that are not parents thenselves
+	 * 
+	 * @return number of children under this parent
+	 */
+	public int getNumberOfFiles()
+	{
+		int numFiles=0;
+		for (int i=0; i<contents.size(); i++)
+		{
+			if (contents.get(i) instanceof Parent)
+			{
+				numFiles += ((Parent)contents.get(i)).getNumberOfFiles();
+			}
+			if (contents.get(i) instanceof Child)
+			{
+				numFiles++;
+			}
+		}
+		return numFiles;
+	}
+}

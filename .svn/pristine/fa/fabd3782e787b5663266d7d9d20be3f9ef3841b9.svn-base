@@ -1,0 +1,73 @@
+package TreeMap;
+
+
+/**
+ * Shape class provide a basic object which represent the name of a rectangle.
+ * @author Louis
+ * @author Risa
+ *
+ */
+public class TitleBar extends Shape
+{
+	private int width;
+	private int height;
+
+
+	/**
+	 * Create a TitleBar object with all it properties
+	 */
+	public TitleBar(int x,int y,int width,int height, String loc, String locSize, int depth)
+	{
+		super(x, y, loc, locSize, depth);
+		this.width = width;
+		this.height = height;
+	}
+
+	/**
+	 *  @return width
+	 */
+	public int getWidth()
+	{
+		return width;
+	}
+
+	/**
+	 * @return height
+	 */
+	public int getHeight()
+	{
+		return height;
+	}
+
+	/**get the String displayed on the treeMap
+	 * 
+	 * @return String file name
+	 */
+	public String getBriefLoc(){
+		if (this.width<5){
+			return " ";
+		}else{
+			if(this.loc.length()<(this.width-4)/7){
+				return this.loc;
+			}
+			return this.loc.substring(0, (this.width-4)/7)+"..";
+		}
+	}
+
+	/**indicating whether this contains the two points
+	 * @param eX
+	 * @param eY
+	 * @return boolean 
+	 */
+	public boolean contains(int eX, int eY)
+	{
+		if(((eX >= super.getX())&&(eX <= (super.getX() + width)))&&((eY >= super.getY())&&(eY <= (super.getY() + height))))
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+}

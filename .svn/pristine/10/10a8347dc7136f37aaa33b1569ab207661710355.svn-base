@@ -1,0 +1,75 @@
+package utility;
+import java.io.File;
+
+import TreeMap.TreeMap;
+
+
+import model.*;
+
+
+public class Controller
+{
+	private Algorithm algorithm;
+	private String algorithmName;
+	private TreeMap treeMap;
+	private File root;
+	private int depth;
+	
+	public Controller(File root, String alg, String colourScheme, boolean nested)
+	{
+		this.root = root;
+		treeMap = new TreeMap(colourScheme);
+		setAlgorithm(alg, nested);
+		runAlgorithm(DataTree.getInstance(root));
+	}
+	
+	
+	
+	private void setAlgorithm(String alg, boolean nested)
+	{
+		if(alg.equals("Slice and Dice"))
+		{
+			algorithm = new SliceAndDice(DataTree.getInstance(root), treeMap, nested);
+		}
+		else if(alg.equals("Squarified"))
+		{
+			algorithm = new Squarified(DataTree.getInstance(root), treeMap, nested);
+		}
+		else
+		{
+			algorithm = new Strip(DataTree.getInstance(root), treeMap, nested);
+		}
+			/*
+		default:
+			algorithm = new SliceAndDice(DataTree.getInstance(root), treeMap);
+			*/
+	}
+	
+	
+	public void runAlgorithm(DataTree theDataTree)
+	{
+		treeMap = algorithm.runAlgorithm();
+	}
+	
+	public String getAlgorithmName() 
+	{
+		return algorithmName;
+	}
+	public DataTree getDataTree(){
+		
+		return DataTree.getInstance(root);
+	}
+	
+	
+	public TreeMap getTreeMap()
+	{
+		return treeMap.get();
+	}
+	
+	
+	public void setDepth(int depth)
+	{
+		this.depth = depth;
+	}
+	
+}

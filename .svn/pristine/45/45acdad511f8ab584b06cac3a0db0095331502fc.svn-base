@@ -1,0 +1,221 @@
+package utility;
+import java.util.List;
+
+
+import TreeMap.*;
+import model.*;
+
+/**
+ * Squarified class get the data from the DataTree and build the field listOfShapes
+ * int the TreeMap class.
+ * 
+ * @author Louis
+ */
+
+public class Squarified extends Algorithm{
+
+	//diffLayerB = Borders between different layers (to facilitate the nested tree map)
+	protected int diffLayerB=0;
+
+
+	/**
+	 * Create a Squarified object with an DataTree, a TreeMap, 
+	 * and a boolean showing whether the treeMap is nested or not
+	 */
+
+	public Squarified (DataTree theDataTree, TreeMap treeMap, boolean nested)
+	{
+		dataTree = theDataTree;
+		this.treeMap = treeMap;
+		if (nested){
+			diffLayerB=4;
+		}
+
+	}
+
+	/**
+	 * it modified the treeMap, adding content to the listOfShapes(field) in TreeMap
+	 * @return TreeMap
+	 */
+
+	public TreeMap runAlgorithm(){
+		applyRule (2, 2, width, height, Sorter.sort(dataTree.getTop()));
+		return treeMap;
+
+	}
+
+	/**
+	 * it modified the treeMap using recursion
+	 * @param x, the x coordinate of the current rectangle
+	 * @param y, the y coordinate of the current rectangle
+	 * @param width, the width of the current rectangle
+	 * @param height, the height of the current rectangle
+	 * @param node, the node that current rectangle represents
+	 * @return void
+	 */
+
+	private void applyRule(int x, int y, int width, int height, Node node)
+	{
+
+		//initialisations
+
+		List<Node> children = ((Parent) node).getContents();
+
+		//add an empty children to draw the last children
+		children.add(new Child("",0, 1));
+
+		//currentWidth, currentHeight, currentX, currentY: 
+		//record of coordinate after drawing some rectangles
+		int currentWidth = width;
+		int currentHeight = height;
+		int currentX = x;
+		int currentY = y;
+
+		//nowX, nowY:
+		//record of coordinate when adding rectangles in the same row/column
+		int nowX = x;
+		int nowY = y;
+
+		//count, previous, marker:
+		//navigators, to navigate the calculations and adding of rectangles
+		int count=0;
+		int previous=0;
+		int marker=0;
+
+		//variables to facilitate the calculation of ratios
+		double totalArea=0;
+		double firstArea=0;
+		double oldRatio =0;
+		double fixD =0;
+
+		//to determine whether the current loop is drawing or calculating
+		boolean drawing=false;
+
+
+		/*about this while loop:
+		 * 
+		 * there are two state, determined by the variable "drawing"
+		 * drawing == true: add the rectangles
+		 * drawing == false: calculate the height to width ratio, determine whether the next 
+		 * 		  	  rectangle should be added in the same line
+		 */
+		while (count<children.size()){
+			int changedWidth=0;
+			int changedHeight=0;
+			//System.out.println("\ncount: "+count+" previous: "+previous+" marker: "+marker);
+			Node child = children.get(count);
+			double area = width*height*child.getPercentage();
+
+			if(count==marker){
+				firstArea=area;
+				fixD = fix(currentHeight, currentWidth, firstArea);
+			}
+			if(!drawing){
+				totalArea += area;
+				double fixDNow = fixD*firstArea/totalArea;
+				double nfixD = firstArea/fixDNow;
+				double newRatio = correctedRatio(fixDNow/nfixD);
+				if(newRatio>oldRatio){
+					//continue looping, calculate the next rectangle
+					oldRatio = newRatio;
+
+				}else{
+					totalArea-=area;
+					drawing=true;
+					previous=count;
+					count = marker;
+					oldRatio=0;
+					continue;
+					//start drawing
+				}
+			}else{
+				if(currentHeight==fixD){
+					double nowHeight = currentHeight*area/totalArea;
+					changedWidth = toInt(area/nowHeight);
+					int hWithBorder = toInt(nowHeight-sameLayerB*2);
+					int wWithBorder = changedWidth-sameLayerB*2;
+					if(hWithBorder<=height&&wWithBorder<=currentWidth&&currentX<x+width&&nowY<y+height){
+						treeMap.addShape(child.getDepth(), new Rectangle(currentX+sameLayerB, nowY+sameLayerB, wWithBorder, hWithBorder, child.getName(), child.getNodeSize(), child.getDepth()));
+						if(nowHeight>14){
+							TitleBar title = new TitleBar(currentX+sameLayerB+diffLayerB, nowY+sameLayerB+diffLayerB+10, wWithBorder, 10, child.getName(), child.getNodeSize(), child.getDepth());
+							treeMap.addShape(child.getDepth(), title);
+						}
+						if(child instanceof Parent){
+							//recursion
+							applyRule(currentX+diffLayerB, nowY+diffLayerB,changedWidth-diffLayerB*2, toInt(nowHeight-diffLayerB*2) , child);
+						}
+
+						nowY += nowHeight;
+					}
+
+				}else{
+					double nowWidth = currentWidth*area/totalArea;
+					changedHeight = toInt(area/nowWidth);
+					int hWithBorder = changedHeight-sameLayerB*2;
+					int wWithBorder = toInt(nowWidth-sameLayerB*2);
+					if(hWithBorder<=currentHeight&&wWithBorder<=width&&nowX<x+width&&currentY<y+height){
+						treeMap.addShape(child.getDepth(), new Rectangle(nowX+sameLayerB, currentY+sameLayerB, wWithBorder, hWithBorder, child.getName(), child.getNodeSize(), child.getDepth()));	
+						if(changedHeight>14){
+							TitleBar title = new TitleBar(nowX+sameLayerB+diffLayerB, currentY+sameLayerB+diffLayerB+10, wWithBorder, 10, child.getName(), child.getNodeSize(), child.getDepth());
+							treeMap.addShape(child.getDepth(), title);
+						}
+
+						if(child instanceof Parent){
+							//recursion
+							applyRule(nowX+diffLayerB, currentY+diffLayerB, toInt(nowWidth-diffLayerB*2), changedHeight-diffLayerB*2 , child);
+						}
+
+						nowX += nowWidth;
+					}
+				}
+			}
+
+			//finish drawing the shapes in the same row/column
+			if (count==previous-1){
+				//Initialize all the stuff, calculate the remaining area after adding the rectangles
+				currentWidth -= changedWidth;
+				currentHeight -= changedHeight;
+				currentX += changedWidth;
+				currentY += changedHeight;
+				nowY=currentY;
+				nowX=currentX;
+				totalArea=0;
+				marker=previous;
+				drawing = false;
+				fixD=0;
+			}
+			count++;
+		}
+
+	}
+
+	//return the fixed dimension(fixD)
+	private double fix(double height, double width, double area){
+		double ratio1 = correctedRatio(height*height/area);
+		double ratio2 = correctedRatio(width*width/area);
+		if(ratio1<ratio2){
+			return width;
+		}else{
+			return height;
+		}
+	}
+
+	//return the correct ratio, if the ratio is bigger than 1
+	private double correctedRatio(double ratio){
+		if(ratio>1){
+			return 1/ratio;
+		}else{
+			return ratio;
+		}
+	}
+
+	//return the round off value of the double number
+	private int toInt(double doubleNum){
+		return Math.round((float)doubleNum);
+	}
+
+
+}
+
+
+

@@ -1,0 +1,248 @@
+package utility;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JFrame;
+
+import TreeMap.*;
+import model.*;
+
+public class Square implements Algorithm{
+
+	//actual size
+	//int height = 348;
+	//int width = 666;
+
+	int height = 348;
+	int width = 666;
+	private DataTree dataTree;
+	private TreeMap treeMap;
+	//private ArrayList<int[]> result;
+
+
+	public Square (DataTree theDataTree, TreeMap treeMap)
+	{
+		dataTree = theDataTree;
+		this.treeMap = treeMap;
+		//result = new ArrayList<int[]>();
+	}
+	/*
+	private ArrayList<int []> divideAll(DataTree theDataTree){
+		Parent top = theDataTree.getTop();
+		for (int i=0; i<top.getNumberOfChildren(); i++){
+			double childPercentage = top.getContents().get(i).getPercentage();
+
+		}
+	}
+
+	private int [] dividOne(int X, int Y, int height, int width, double percentage, Boolean isOdd){
+
+		if (isOdd){
+			int [] oneRectangle = {X, Y, height, (int) (width*percentage)};
+			return oneRectangle;
+		}else{
+			int [] oneRectangle = {X, Y, (int) (height*percentage), width};
+			return oneRectangle;
+		}
+	}
+
+
+	public ArrayList<int []> getData(){
+
+
+		return 
+	}
+	 */
+	public TreeMap runAlgorithm(){
+		applyRule (2, 2, width, height, Sorter.sort(dataTree.getTop()), true);
+		return treeMap;
+
+	}
+
+
+	public void applyRule(int x, int y, int width, int height, Node node, boolean isOdd)
+	{
+		List<Node> children = ((Parent) node).getContents();
+		children.add(new Child("",0, false));
+		List<Node> pendingChildren = new ArrayList<Node>();
+		int currentWidth = width;
+		int currentHeight = height;
+		int currentX = x;
+		int currentY = y;
+		int childCount=0;
+
+		double totalareaNotInclude = 0;
+		double oddRatio=0;
+		double totalareaInclude=0;
+
+		boolean heightFixed = true;
+		boolean notResizing = true;
+
+
+		while(childCount<children.size())
+		{
+			System.out.println("\nchildcount: "+childCount);
+			Node child = children.get(childCount);
+			double area = currentWidth*currentHeight*child.getPercentage();
+			totalareaInclude += area;
+
+			if(currentHeight<currentWidth){
+				heightFixed=true;
+			}else{
+				heightFixed=false;
+			}
+
+
+			if(notResizing)
+			{
+				pendingChildren.add(child);
+				totalareaNotInclude+=area;
+				notResizing=false;
+				if(heightFixed){
+					oddRatio = correctedRatio(currentHeight*currentHeight/area);
+				}else{
+					oddRatio = correctedRatio(currentWidth*currentWidth/area);
+				}
+
+			}
+			else
+			{
+				double newRatio=0;
+				if(heightFixed){
+					newRatio=correctedRatio(currentHeight*currentHeight*area/(totalareaInclude*totalareaInclude));
+					System.out.println("oddRatio: "+oddRatio+ "newRatio: "+newRatio);
+					System.out.println("pendingChildren: "+pendingChildren.size());
+
+					if(newRatio>oddRatio){
+						oddRatio=newRatio;
+						pendingChildren.add(child);
+						totalareaNotInclude+=area;
+					}
+
+					else{
+						int nowY = currentY;
+						double pendingChildwidth = 0;
+
+						for(int i=0; i<pendingChildren.size();i++){
+							Node pendingChild = pendingChildren.get(i);
+							double pendingChildArea = width*height*pendingChild.getPercentage();
+							double pendingChildHeight = currentHeight*pendingChildArea/totalareaNotInclude;
+							if(i==0){
+								pendingChildwidth = pendingChildArea/pendingChildHeight;
+							}
+							System.out.println("area: "+pendingChildArea+"height: "+pendingChildHeight+"width: "+pendingChildwidth);
+							treeMap.addShape(child.getDepth(), new Rectangle(currentX+1, nowY+1, (int)pendingChildwidth-2, (int)pendingChildHeight-2, pendingChild.getName(), pendingChild.getNodeSize()));
+							System.out.println("drawRec"+pendingChild.getName());
+							nowY+=pendingChildHeight;
+
+						}
+						currentX+=pendingChildwidth;
+						currentWidth -= pendingChildwidth;
+						notResizing=true;
+						totalareaInclude=0;
+						totalareaNotInclude=0;
+						childCount--;
+						pendingChildren.clear();
+
+					}
+
+				}else{
+					newRatio=correctedRatio((currentWidth*currentWidth*area/(totalareaInclude*totalareaInclude)));
+					System.out.println("oddRatio: "+oddRatio+ "newRatio: "+newRatio);
+					if(newRatio>oddRatio){
+						oddRatio=newRatio;
+						pendingChildren.add(child);
+						totalareaNotInclude+=area;
+					}
+					else{
+						int nowX = currentX;
+						double pendingChildHeight = 0;
+						System.out.println("pendingChildren: "+pendingChildren.size());
+						for(int i=0; i<pendingChildren.size();i++){
+							Node pendingChild = pendingChildren.get(i);
+							double pendingChildArea = width*height*pendingChild.getPercentage();
+							double pendingChildwidth = currentWidth*pendingChildArea/totalareaNotInclude;
+							if(i==0){
+								pendingChildHeight = pendingChildArea/pendingChildwidth;
+							}
+							System.out.println("area: "+pendingChildArea+"height: "+pendingChildHeight+"width: "+pendingChildwidth+"totalareaNotInclude: "+totalareaNotInclude);
+							treeMap.addShape(child.getDepth(), new Rectangle(nowX+1, currentY+1, (int)pendingChildwidth-2, (int)pendingChildHeight-2, pendingChild.getName(), pendingChild.getNodeSize()));
+							System.out.println("drawRec"+pendingChild.getName());
+							nowX+=pendingChildwidth;
+
+						}
+						currentY+=pendingChildHeight;
+						currentHeight -= pendingChildHeight;
+						notResizing=true;
+						totalareaInclude=0;
+						totalareaNotInclude=0;
+						childCount--;
+						pendingChildren.clear();
+					}
+				}
+
+
+
+
+			}
+			childCount++;
+		}
+	}
+
+	private double correctedRatio(double theRatio){
+		if (theRatio>1){
+			return 1/theRatio;
+		}else{
+			return theRatio;
+		}
+	}
+
+	public static void main(String arg[]){
+		File file = new File("H:/workspace/Prototype/src");
+		TreeMap treeMap = new TreeMap();
+		Square sliceNDice = new Square(DataTree.getInstance(file), treeMap);
+		sliceNDice.runAlgorithm();
+		System.out.println(treeMap.getListOfShapes().size());
+		for (int i = 0; i<treeMap.getListOfShapes().size(); i++){
+			List<Shape> layerNow = treeMap.getListOfShapes().get(i);
+			for (int j=0; j<layerNow.size(); j++){
+				System.out.println("rec"+layerNow.get(j).getHeight()+" "+layerNow.get(j).getWidth());
+			}
+			System.out.println(treeMap.getListOfShapes().get(i));
+		}
+
+		JFrame frame = new JFrame();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.add(treeMap.get());
+		frame.setSize(700, 400);
+		frame.pack();
+		frame.setVisible(true);
+
+
+	}
+
+
+
+
+	/*
+		// Method 2: displaying a treemap by drawing borders
+		int startPosition = 0;
+		int numOfChildren = tree.getRootElement().getNumberOfChildren();
+		List<Node> children = tree.getRootElement().getChildren();
+
+		Border[] borders = new Border[numOfChildren-1];
+		for(int i = 0; i < numOfChildren-1; i++) {
+			Node child = children.get(i);
+			startPosition += (int) (1000 * child.getRatio());
+
+			borders[i] = new Border(startPosition, 0, 1, 500);
+			borders[i].makeVisible();
+
+		}
+	 */
+}
+
+
+

@@ -1,0 +1,124 @@
+package TreeMap;
+
+import static org.junit.Assert.*;
+
+import java.awt.Color;
+
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+/**
+ * This class tests if ColourScheme object functions properly.
+ * @author Risa Matsumura
+ *
+ */
+public class TestColourScheme {
+	private ColourScheme red, orange, green, blue, purple, bw;
+
+	/**
+	 * Set up fields
+	 * @throws Exception
+	 */
+	@Before
+	public void setUp() throws Exception {
+		red = new ColourScheme("red");
+		orange = new ColourScheme("orange");
+		green = new ColourScheme("green");
+		blue = new ColourScheme("blue");
+		purple = new ColourScheme("purple");
+		bw = new ColourScheme("bw");
+	}
+
+	/**
+	 * Check if colours in each colour schemes are set up properly
+	 */
+	@Test
+	public void testGetColour() {
+		// test red colour scheme
+		assertEquals(red.getColour(0), new Color(0x00,	0x00,	0x00));
+		assertEquals(red.getColour(1), new Color(0x4D,	0x10,	0x10));
+		assertEquals(red.getColour(2), new Color(0x8B,	0x00,	0x00));
+		assertEquals(red.getColour(3), new Color(0xC1,	0x1B,	0x17));
+		assertEquals(red.getColour(4), new Color(0xFF,	0x00,	0x00));
+		assertEquals(red.getColour(5), new Color(0xC3,	0x62,	0x41));
+		assertEquals(red.getColour(6), new Color(0xF7,	0x65,	0x41));
+		assertEquals(red.getColour(7), new Color(0xE7,	0x8A,	0x61));
+		assertEquals(red.getColour(8), new Color(0xF9,	0xA3,	0x7E));
+		assertEquals(red.getColour(9), new Color(0xFF,	0xFF,	0xFF));
+		
+		// test orange colour scheme
+		assertEquals(orange.getColour(0), new Color(0x00,	0x00,	0x00));
+		assertEquals(orange.getColour(1), new Color(0x46,	0x30,	0x08));
+		assertEquals(orange.getColour(2), new Color(0x74,	0x57,	0x21));
+		assertEquals(orange.getColour(3), new Color(0xA4,	0x6E,	0x0A));
+		assertEquals(orange.getColour(4), new Color(0xF2,	0x9E,	0x01));
+		assertEquals(orange.getColour(5), new Color(0xFE,	0xBB,	0x2A));
+		assertEquals(orange.getColour(6), new Color(0xFD,	0xD0,	0x17));
+		assertEquals(orange.getColour(7), new Color(0xFF,	0xEC,	0x7A));
+		assertEquals(orange.getColour(8), new Color(0xFF,	0xE9,	0xC1));
+		assertEquals(orange.getColour(9), new Color(0xFF,	0xFF,	0xFF));
+		
+		// test green colour scheme
+		assertEquals(green.getColour(0), new Color(0x00,	0x00,	0x00));
+		assertEquals(green.getColour(1), new Color(0x25,	0x41,	0x17));
+		assertEquals(green.getColour(2), new Color(0x34,	0x72,	0x35));
+		assertEquals(green.getColour(3), new Color(0x46,	0x8F,	0x29));
+		assertEquals(green.getColour(4), new Color(0x4C,	0xC5,	0x52));
+		assertEquals(green.getColour(5), new Color(0x00,	0xFF,	0x00));
+		assertEquals(green.getColour(6), new Color(0xB1,	0xFB,	0x17));
+		assertEquals(green.getColour(7), new Color(0xFF,	0xFF,	0x00));
+		assertEquals(green.getColour(8), new Color(0xFA,	0xFA,	0x7A));
+		assertEquals(green.getColour(9), new Color(0xFF,	0xFF,	0xFF));
+		
+		// test blue colour scheme
+		assertEquals(blue.getColour(0), new Color(0x00,	0x00,	0x00));
+		assertEquals(blue.getColour(1), new Color(0x15,	0x1B,	0x54));
+		assertEquals(blue.getColour(2), new Color(0x22,	0x28,	0x98));
+		assertEquals(blue.getColour(3), new Color(0x0F,	0x45,	0xC3));
+		assertEquals(blue.getColour(4), new Color(0x11,	0x72,	0xD2));
+		assertEquals(blue.getColour(5), new Color(0x28,	0x9C,	0xDB));
+		assertEquals(blue.getColour(6), new Color(0xAD,	0xDF,	0xFF));
+		assertEquals(blue.getColour(7), new Color(0x00,	0xFF,	0xFF));
+		assertEquals(blue.getColour(8), new Color(0xE0,	0xFF,	0xFF));
+		assertEquals(blue.getColour(9), new Color(0xFF,	0xFF,	0xFF));
+		
+		// test blue colour scheme
+		assertEquals(purple.getColour(0), new Color(0x00,	0x00,	0x00));
+		assertEquals(purple.getColour(1), new Color(0x37,	0x16,	0x62));
+		assertEquals(purple.getColour(2), new Color(0x4C,	0x1C,	0x8B));
+		assertEquals(purple.getColour(3), new Color(0x6C,	0x2D,	0xC7));
+		assertEquals(purple.getColour(4), new Color(0x8E,	0x35,	0xEF));
+		assertEquals(purple.getColour(5), new Color(0xB0,	0x41,	0xFF));
+		assertEquals(purple.getColour(6), new Color(0xCB,	0x80,	0xFF));
+		assertEquals(purple.getColour(7), new Color(0xF1,	0x51,	0xFF));
+		assertEquals(purple.getColour(8), new Color(0xF9,	0xB7,	0xFF));
+		assertEquals(purple.getColour(9), new Color(0xFF,	0xFF,	0xFF));
+		
+		// test black&white colour scheme
+		assertEquals(bw.getColour(0), new Color(0x00,	0x00,	0x00));
+		assertEquals(bw.getColour(1), new Color(0x2F,	0x4F,	0x4F));
+		assertEquals(bw.getColour(2), new Color(0x54,	0x54,	0x54));
+		assertEquals(bw.getColour(3), new Color(0x80,	0x80,	0x80));
+		assertEquals(bw.getColour(4), new Color(0xA8,	0xA8,	0xA8));
+		assertEquals(bw.getColour(5), new Color(0xC0,	0xC0,	0xC0));
+		assertEquals(bw.getColour(6), new Color(0xCD,	0xCD,	0xCD));
+		assertEquals(bw.getColour(7), new Color(0xD9,	0xD9,	0xF3));
+		assertEquals(bw.getColour(8), new Color(0xE6,	0xE8,	0xFA));
+		assertEquals(bw.getColour(9), new Color(0xFF,	0xFF,	0xFF));
+	}
+
+	/**
+	 * Check if correct colour scheme names are returned
+	 */
+	@Test
+	public void testGetColourSchemeName() {
+		assertEquals(red.getColourSchemeName(), "red");
+		assertEquals(orange.getColourSchemeName(), "orange");
+		assertEquals(green.getColourSchemeName(), "green");
+		assertEquals(blue.getColourSchemeName(), "blue");
+		assertEquals(purple.getColourSchemeName(), "purple");
+		assertEquals(bw.getColourSchemeName(), "bw");
+	}
+
+}

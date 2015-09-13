@@ -1,0 +1,19 @@
+package utility;
+
+import model.DataTree;
+import TreeMap.TreeMap;
+
+public abstract class Algorithm {
+
+	protected int height = 348;
+	protected int width = 666;
+	protected DataTree dataTree;
+	protected TreeMap treeMap;
+	protected boolean nested;
+	
+	protected int sameLayerB=1;
+
+	
+	
+	public abstract TreeMap runAlgorithm();
+}

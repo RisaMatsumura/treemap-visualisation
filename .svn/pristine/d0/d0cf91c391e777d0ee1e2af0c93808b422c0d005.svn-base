@@ -1,0 +1,8 @@
+package utility;
+
+import TreeMap.TreeMap;
+
+public interface Algorithm {
+
+	public TreeMap runAlgorithm();
+}

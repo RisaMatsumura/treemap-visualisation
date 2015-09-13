@@ -1,0 +1,251 @@
+package view;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.util.ArrayList;
+
+import javax.swing.*;
+import javax.swing.text.StyledEditorKit.FontSizeAction;
+
+import model.DataTree;
+
+import utility.Controller;
+
+
+
+import java.awt.*;
+import java.awt.event.*;
+
+/**
+ * Graphical User Interface and visual view of the application.
+ * @author Jonas Pikiotas
+ * @author Lai Chin Chung Louis
+ * @version 1.0 
+ */
+
+public class GUI {
+
+	/**
+	 * Creates the Graphical User Interface and displays it on the screen.
+	 */
+	public static void main(String[] args) {
+		
+		GUI a = new GUI();
+
+	}
+	
+	private JFrame mainFrame;
+	private JButton runButton;
+	private JButton openButton;
+	private JButton infoButton;
+	private JTextArea mainArea;
+	private JTextArea metaArea;
+	private JTextField rootPath;
+	private JToolBar toolbar;
+	private JRadioButton sliceDice;
+	private JRadioButton a2;
+	private JRadioButton a3;
+	
+	private File rootFile;
+	private DataTree tree;
+	private Controller controller;
+	
+	public GUI(){
+		
+		//creating components
+		
+		mainArea = new JTextArea(20, 60);
+		metaArea = new JTextArea(20, 10);
+		JScrollPane mainPane = new JScrollPane(mainArea);
+		toolbar = new JToolBar();
+		
+		
+		infoButton = new JButton(createImageIcon("/images/info.png"));
+		openButton = new JButton(createImageIcon("/images/open.png"));
+		runButton = new JButton(createImageIcon("/images/run.png"));
+		
+		rootPath = new JTextField(47);
+		
+		sliceDice = new JRadioButton("Algorithm 1");
+		a2 = new JRadioButton("Algorithm 2");
+		a3 = new JRadioButton("Algorithm 3");
+		
+		//properties of the components
+		runButton.setToolTipText("Traverse the root folder");
+		rootPath.setText("Select Root directory...");
+		rootPath.setFont(new Font("Serif", Font.BOLD, 16));
+		
+		metaArea.setMargin(new Insets(5, 5, 5, 5));
+		mainArea.setMargin(new Insets(5, 5, 5, 5));
+		
+		mainArea.setEditable(false);
+		metaArea.setEditable(false);
+		rootPath.setEditable(false);
+		
+		sliceDice.setSelected(true);
+		
+		//grouping radio buttons
+		final ButtonGroup group = new ButtonGroup();
+		group.add(sliceDice);
+		group.add(a2);
+		group.add(a3);
+		
+		//creating containers
+		mainFrame = new JFrame("TreeMap");
+		
+		JPanel rootBox = new JPanel();
+		JPanel areaBox = new JPanel();
+		JPanel algorithmBox = new JPanel();
+		
+		
+		//Specifying Layout Managers
+		mainFrame.getContentPane().setLayout(new BorderLayout());
+		rootBox.setLayout(new BorderLayout());
+		areaBox.setLayout(new BorderLayout());
+		algorithmBox.setLayout(new FlowLayout());
+		
+		//Adding components to the containers
+		toolbar.add(infoButton);
+		toolbar.add(runButton);
+		
+		algorithmBox.add(sliceDice);
+		algorithmBox.add(a2);
+		algorithmBox.add(a3);
+		
+		rootBox.add(rootPath, BorderLayout.WEST);
+		rootBox.add(openButton, BorderLayout.AFTER_LINE_ENDS);
+		rootBox.add(toolbar, BorderLayout.NORTH);
+		rootBox.add(algorithmBox, BorderLayout.SOUTH);
+		
+		areaBox.add(metaArea, BorderLayout.WEST);
+		areaBox.add(mainPane, BorderLayout.EAST);
+		
+		mainFrame.getContentPane().add(rootBox, BorderLayout.NORTH);
+		mainFrame.getContentPane().add(areaBox, BorderLayout.CENTER);
+		
+		
+		
+		
+		
+		
+		//Event handling
+		mainFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		
+		mainFrame.addWindowListener(new WindowAdapter(){
+			public void windowClosing(WindowEvent e){
+				exitApp();
+			}
+		});
+		
+		
+		openButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				
+				JFileChooser chooser = new JFileChooser();
+				chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				int returnVal = chooser.showOpenDialog(mainFrame);
+				
+				rootFile = chooser.getSelectedFile();
+				
+				if(returnVal == JFileChooser.APPROVE_OPTION){
+					rootPath.setText(rootFile.getPath());
+				}
+				
+			}
+		});
+		
+		runButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				if(rootPath.getText().contains("Select Root directory...")){
+					JOptionPane.showMessageDialog(mainFrame, "You need to select root folder first!", 
+							"Error!", JOptionPane.ERROR_MESSAGE);
+				} else {
+
+					controller = new Controller(rootFile, getSelectedAlgorithm());
+					//tree = new DataTree(manager.getFileList(rootFile));
+					mainArea.setText("-"+controller.getDataTree().getTop().getName()+"\n");
+					mainArea.setText(controller.getDataTree().printAllData());
+					metaArea.setText("Root Folder Size:\n" + controller.getDataTree().getRootFolderSize());
+					metaArea.append("\n\nNumber of Folders:\n" + controller.getDataTree().getNumberOfFolders());
+					metaArea.append("\n\nNumber of Files:\n" + controller.getDataTree().getNumberOfFiles());
+				}
+			}
+		});
+		
+		infoButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				JOptionPane.showMessageDialog(mainFrame, "Visualation Tool Version 0.00001\n\n" +
+						"Team Members:\n\n" +
+						"Luke Duffy\n" +
+						"Lai Chin Chung Louis\n" +
+						"Risa Matsumura\n" +
+						"David Ling\n" +
+						"Jonas Pikiotas", 
+						"Information", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
+		
+		//display the GUI
+		mainFrame.setPreferredSize(new Dimension(820, 500));
+		mainFrame.setResizable(false);
+		mainFrame.pack();
+		mainFrame.setVisible(true);
+		
+		System.out.println(mainArea.getHeight());
+		System.out.println(mainArea.getWidth());
+	}
+	
+	/**
+	 * Function that shows JOptionPane Dialog before closing the program
+	 */
+	private void exitApp(){
+		int response = JOptionPane.showConfirmDialog(mainFrame, "Do you really want to quit?", 
+				"Quit?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+		
+		if(response == JOptionPane.YES_OPTION){
+			System.exit(0);
+		}
+		
+	}
+	/**
+	 * Checks if the image path is valid and fetches the image
+	 * @param path where the image is located
+	 * @return ImageIcon or null if the path was invalid
+	 */
+	private ImageIcon createImageIcon(String path){
+		
+		java.net.URL imgURL = GUI.class.getResource(path);
+		if(imgURL != null){
+			return new ImageIcon(imgURL);
+		} else {
+			JOptionPane.showMessageDialog(mainFrame, "Couldn't find the images, exiting the program...", 
+					"Error!", JOptionPane.ERROR_MESSAGE);
+			System.exit(1);
+			return null;
+		}
+	}
+	
+	/**
+	 * Checks which algorithm user chose
+	 * @return the number associated with chosen algorithm
+	 */
+	private int getSelectedAlgorithm(){
+		
+		int alg;
+		
+		if(sliceDice.isSelected()){
+			alg = 1;
+		} else if(a2.isSelected()){
+			alg = 2;
+		} else {
+			alg = 3;
+		}
+		
+		return alg;
+	}
+
+}

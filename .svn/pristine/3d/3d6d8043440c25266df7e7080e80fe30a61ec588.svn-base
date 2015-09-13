@@ -1,0 +1,316 @@
+package view;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.text.StyledEditorKit.FontSizeAction;
+
+import TreeMap.TreeMap;
+
+import model.DataTree;
+
+import utility.Controller;
+
+
+
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+
+/**
+ * Graphical User Interface and visual view of the application.
+ * @author Jonas Pikiotas
+ * @author Lai Chin Chung Louis
+ * @version 1.0 
+ */
+
+public class Testing {
+
+	/**
+	 * Creates the Graphical User Interface and displays it on the screen.
+	 */
+	public static void main(String[] args) {
+		
+		Testing a = new Testing();
+
+	}
+	
+	private JFrame mainFrame;
+	private JButton runButton;
+	private JButton openButton;
+	private JButton infoButton;
+	private JButton saveButton;
+	private JTextField rootPath;
+	private JToolBar toolbar;
+	private JRadioButton sliceDice;
+	private JRadioButton squarified;
+	private JRadioButton a3;
+	
+	private File rootFile;
+	private DataTree tree;
+	private Controller controller;
+	//private Controller controller;
+	
+	private JPanel proxyPanel;
+	private JTabbedPane tabbedPane;
+	private JPanel treeMap;
+	
+	public Testing(){
+		
+		//creating components
+		proxyPanel = new JPanel();
+		toolbar = new JToolBar();
+		tabbedPane = new JTabbedPane();
+		
+		
+		infoButton = new JButton(createImageIcon("/images/info.png"));
+		openButton = new JButton(createImageIcon("/images/open.png"));
+		runButton = new JButton(createImageIcon("/images/run.png"));
+		saveButton = new JButton("Save");
+		
+		rootPath = new JTextField(47);
+		
+		sliceDice = new JRadioButton("Slice and Dice");
+		squarified = new JRadioButton("Squarified");
+		a3 = new JRadioButton("Algorithm 3");
+		
+		//properties of the components
+		runButton.setToolTipText("Traverse the root folder");
+		rootPath.setText("Select Root directory...");
+		rootPath.setFont(new Font("Serif", Font.BOLD, 16));
+		rootPath.setEditable(false);
+		
+		sliceDice.setSelected(true);
+		
+		proxyPanel.setPreferredSize(new Dimension(793, 354));
+		proxyPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+		
+		
+		//grouping radio buttons
+		final ButtonGroup group = new ButtonGroup();
+		group.add(sliceDice);
+		group.add(squarified);
+		group.add(a3);
+		
+		//creating containers
+		mainFrame = new JFrame("Testing");
+		
+		JPanel rootBox = new JPanel();
+		JPanel algorithmBox = new JPanel();
+		
+		//helper panes for a margin
+		JPanel marginPane1 = new JPanel();
+		JPanel marginPane2 = new JPanel();
+		JPanel marginPane3 = new JPanel();
+		
+		//Specifying Layout Managers
+		mainFrame.getContentPane().setLayout(new BorderLayout());
+		rootBox.setLayout(new BorderLayout());
+		algorithmBox.setLayout(new FlowLayout());
+		
+		//Adding components to the containers
+		toolbar.add(infoButton);
+		toolbar.add(runButton);
+		toolbar.add(saveButton);
+		
+		
+		algorithmBox.add(sliceDice);
+		algorithmBox.add(squarified);
+		algorithmBox.add(a3);
+		
+		rootBox.add(rootPath, BorderLayout.WEST);
+		rootBox.add(openButton, BorderLayout.AFTER_LINE_ENDS);
+		rootBox.add(toolbar, BorderLayout.NORTH);
+		rootBox.add(algorithmBox, BorderLayout.SOUTH);
+		
+		mainFrame.getContentPane().add(rootBox, BorderLayout.NORTH);
+		mainFrame.getContentPane().add(proxyPanel, BorderLayout.CENTER);
+		mainFrame.getContentPane().add(marginPane1, BorderLayout.SOUTH);
+		mainFrame.getContentPane().add(marginPane2, BorderLayout.EAST);
+		mainFrame.getContentPane().add(marginPane3, BorderLayout.WEST);
+		
+		
+		
+		
+		
+		
+		//Event handling
+		mainFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		
+		mainFrame.addWindowListener(new WindowAdapter(){
+			public void windowClosing(WindowEvent e){
+				exitApp();
+			}
+		});
+		
+		
+		openButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				
+				JFileChooser chooser = new JFileChooser();
+				chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				int returnVal = chooser.showOpenDialog(mainFrame);
+				
+				rootFile = chooser.getSelectedFile();
+				
+				if(returnVal == JFileChooser.APPROVE_OPTION){
+					rootPath.setText(rootFile.getPath());
+				}
+				
+			}
+		});
+		
+		runButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				if(rootPath.getText().contains("Select Root directory...")){
+					JOptionPane.showMessageDialog(mainFrame, "You need to select root folder first!", 
+							"Error!", JOptionPane.ERROR_MESSAGE);
+				} else {
+						addTreeMap();
+					}
+				}
+			}
+		);
+		
+		infoButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				JOptionPane.showMessageDialog(mainFrame, "Visualation Tool Version 0.00001\n\n" +
+						"Team Members:\n\n" +
+						"Luke Duffy\n" +
+						"Lai Chin Chung Louis\n" +
+						"Risa Matsumura\n" +
+						"David Ling\n" +
+						"Jonas Pikiotas", 
+						"Information", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
+		
+		saveButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				if(treeMap == null){
+					JOptionPane.showMessageDialog(mainFrame, "You need to generate a tree map first!",
+							"Error!", JOptionPane.ERROR_MESSAGE);
+				} else {
+					saveImage(tabbedPane.getSelectedComponent());
+				}
+			}
+		});
+		
+		//display the GUI
+		mainFrame.setPreferredSize(new Dimension(820, 520));
+		mainFrame.setResizable(false);
+		mainFrame.pack();
+		mainFrame.setVisible(true);
+		System.out.println(proxyPanel.getHeight());
+		System.out.println(proxyPanel.getWidth());
+	}
+	
+	/**
+	 * Function that shows JOptionPane Dialog before closing the program
+	 */
+	private void exitApp(){
+		int response = JOptionPane.showConfirmDialog(mainFrame, "Do you really want to quit?", 
+				"Quit?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+		
+		if(response == JOptionPane.YES_OPTION){
+			System.exit(0);
+		}
+		
+	}
+	/**
+	 * Checks if the image path is valid and fetches the image
+	 * @param path where the image is located
+	 * @return ImageIcon or null if the path was invalid
+	 */
+	private ImageIcon createImageIcon(String path){
+		
+		java.net.URL imgURL = GUI.class.getResource(path);
+		if(imgURL != null){
+			return new ImageIcon(imgURL);
+		} else {
+			JOptionPane.showMessageDialog(mainFrame, "Couldn't find the images, exiting the program...", 
+					"Error!", JOptionPane.ERROR_MESSAGE);
+			System.exit(1);
+			return null;
+		}
+	}
+	
+	/**
+	 * Checks which algorithm user chose
+	 * @return the number associated with chosen algorithm
+	 */
+	private String getSelectedAlgorithm(){
+		
+		String alg;
+		
+		if(sliceDice.isSelected()){
+			alg = "Slice and Dice";
+		} else if(squarified.isSelected()){
+			alg = "Squarified";
+		} else {
+			alg = "Algorithm 3";
+		}
+		
+		return alg;
+	}
+	
+	private void addTreeMap(){
+		
+		controller = new Controller(rootFile, getSelectedAlgorithm());
+		treeMap = controller.getTreeMap();
+		
+		JTextArea metaData = new JTextArea(20, 10);
+		metaData.setMargin(new Insets(5, 5, 5, 5));
+		
+		JPanel tab = new JPanel();
+		tab.setLayout(new BorderLayout());
+		tab.add(metaData, BorderLayout.WEST);
+		tab.add(treeMap, BorderLayout.EAST);
+		
+		tabbedPane.addTab(getSelectedAlgorithm(), tab);
+		mainFrame.getContentPane().remove(proxyPanel);
+		mainFrame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
+
+		metaData.setText("Root Folder Size:\n" + controller.getDataTree().getRootFolderSize());
+		metaData.append("\n\nNumber of Folders:\n" + controller.getDataTree().getNumberOfFolders());
+		metaData.append("\n\nNumber of Files:\n" + controller.getDataTree().getNumberOfFiles());
+		
+	}
+	
+	private void saveImage(Component component){
+		BufferedImage buffImage = new BufferedImage(component.getSize().width, component.getSize().height, BufferedImage.TYPE_INT_RGB);
+		component.paint(buffImage.createGraphics());
+		File image = new File("name");
+		
+		JFileChooser chooser = new JFileChooser();
+		chooser.setSelectedFile(image);
+		int returnVal = chooser.showSaveDialog(mainFrame);
+		if(returnVal == JFileChooser.APPROVE_OPTION){
+			image = chooser.getSelectedFile();
+		}
+		
+		try {
+			image.createNewFile();
+			ImageIO.write(buffImage, "jpeg", image);
+		} catch (IOException e) {
+			
+		}
+		
+		
+		
+	}
+
+}

@@ -1,0 +1,44 @@
+package model;
+
+/**
+ * Represents a child node of the Data Structure.
+ * @author Jonas Pikiotas
+ * @author Lai Chin Chung Louis
+ * @version 1.0 
+ * 
+ * This is a test comment for svn written by Risa.
+ */
+
+public class Child extends Node{
+
+	/**
+	 * Default Constructor to create a Child object with three parameters.
+	 * 
+	 * @param name instance of String
+	 * @param size type of long
+	 * @param isParent whether the node is parent or not.
+	 */
+	public Child(String name, long size, boolean isParent){
+		super (name, size, isParent);
+		
+	}
+
+	/**
+	 * Returns this object as a string.
+	 */
+	public String toString() {
+		return name+size;
+	}
+	
+	/**
+	 * 
+	 * @return the size of the child
+	 */
+
+	public long getSize() {
+		// TODO Auto-generated method stub
+		return size;
+	}
+	
+	
+}

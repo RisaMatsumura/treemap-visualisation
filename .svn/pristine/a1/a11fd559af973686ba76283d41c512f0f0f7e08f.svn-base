@@ -1,0 +1,133 @@
+package model;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+
+
+/**
+ * Represents a parent Node of the Data Structure.
+ * @author Jonas Pikiotas
+ * @author Lai Chin Chung Louis
+ * @version 1.0 
+ */
+public class Parent extends Node{
+
+	private ArrayList <Node> contents;
+	private long totalSize;
+	
+	/**
+	 * Default constructor to create Parent Node with three parameters.
+	 * @param name instance of String
+	 * @param size instance of Long
+	 * @param isParent whether the node is parent or not.
+	 */
+	public Parent(String name, long size, boolean isParent){
+		super (name, size, isParent);
+		contents = new ArrayList <Node>();
+	}
+	
+	/**
+	 * Add Node to the Data Structure.
+	 * @param theContent instance of Node to add
+	 */
+	public void addContents(Node theContent){
+		contents.add(theContent);
+	}
+	
+	/**
+	 * @return the contents of the Data Structure.
+	 */
+	public ArrayList <Node> getContents(){
+		return contents;
+	}
+	
+	/**
+	 * Checks whether Parent Node is empty
+	 * @return true if empty, false if not
+	 */
+	public boolean parentEmpty(){
+		return contents.isEmpty();
+	}
+	
+	/**
+	 * Sets the total size of the Parent
+	 * @param totalSize of type long
+	 */
+	public void setTotalSize(long totalSize){
+		this.totalSize = totalSize;
+	}
+	
+	/**
+	 * 
+	 * @return the total size of the parent
+	 */
+	public long getSize(){
+		return totalSize;
+	}
+	
+	/**
+	 * @return Parent as a String
+	 */
+	public String toString(){
+		return toString(contents, "-");
+	}
+	
+	
+	private String toString(ArrayList <Node> contents, String tab) {
+		
+		NumberFormat nf = new DecimalFormat();
+		nf.setMaximumFractionDigits(4);
+		
+		String allData="";
+		for (int i=0; i<contents.size();i++){
+			//the contents of the current iteration is added to the allData
+			allData+=tab+contents.get(i).getName()+" ("+contents.get(i).getSize()+")" +nf.format(contents.get(i).getPercentage())+"\n";
+			if (contents.get(i).isParent()){
+				if (!((Parent)contents.get(i)).parentEmpty()){
+					allData+=toString(((Parent) contents.get(i)).getContents(), tab+"\t-");
+				}
+			}
+		}
+		return allData;
+	
+	}
+	
+	/**
+	 * @return number of children under this parent
+	 */
+	public int getNumberOfChildren(){
+		return contents.size();
+	}
+	
+	/**
+	 * @return number of folders under this parent
+	 */
+	public int getNumberOfFolders(){
+		int numFolders=0;
+		for (int i=0; i<contents.size(); i++){
+			if (contents.get(i) instanceof Parent){
+				numFolders++;
+				numFolders += ((Parent)contents.get(i)).getNumberOfFolders();
+			}
+		}
+		return numFolders;
+	}
+	
+	/**
+	 * @return number of children under this parent
+	 */
+	public int getNumberOfFiles(){
+		int numFiles=0;
+		for (int i=0; i<contents.size(); i++){
+			if (contents.get(i) instanceof Parent){
+				numFiles += ((Parent)contents.get(i)).getNumberOfFiles();
+			}
+			if (contents.get(i) instanceof Child){
+				numFiles++;
+			}
+		}
+		return numFiles;
+	}
+	
+	
+}

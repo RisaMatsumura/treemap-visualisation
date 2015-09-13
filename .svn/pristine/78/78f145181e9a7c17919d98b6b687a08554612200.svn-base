@@ -1,0 +1,55 @@
+package Model;
+/**
+ * Represents the Node of the DataTree.
+ * @author Jonas Pikiotas
+ * @author Lai Chin Chung Louis
+ * @version 1.0 
+ */
+public abstract class Node {
+
+	protected String name;
+	protected long size;
+	protected boolean isParent;
+	
+	/**
+	 * Default constructor to create instance of Node
+	 * @param name instance of String
+	 * @param size type of long
+	 * @param isParent whether the node is parent or not.
+	 */
+	protected Node(String name, long size, boolean isParent) {
+		this.name = name;
+		this.size = size;
+		this.isParent = isParent;
+	}
+
+	/**
+	 * 
+	 * @return the name of the instance of Node
+	 */
+	public String getName(){
+		return name;
+	}
+	
+	/**
+	 * 
+	 * @return the size of the instance of Node
+	 */
+	protected long getSize(){
+		return size;
+	}
+	
+	/**
+	 * 
+	 * @return whether the instance of Node is a Parent
+	 */
+	public boolean isParent(){
+		return isParent;
+	}
+	
+	/**
+	 * Returns the object as a String
+	 */
+	abstract public String toString();
+}
+

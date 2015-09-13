@@ -1,0 +1,110 @@
+package utility;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import TreeMap.*;
+import model.*;
+
+public class SliceAndDice implements Algorithm{
+
+	int height = 361;
+	int width = 670;
+	private DataTree dataTree;
+	private TreeMap treeMap;
+	//private ArrayList<int[]> result;
+
+	
+	public SliceAndDice (DataTree theDataTree, TreeMap treeMap)
+	{
+		dataTree = theDataTree;
+		this.treeMap = treeMap;
+		//result = new ArrayList<int[]>();
+	}
+	/*
+	private ArrayList<int []> divideAll(DataTree theDataTree){
+		Parent top = theDataTree.getTop();
+		for (int i=0; i<top.getNumberOfChildren(); i++){
+			double childPercentage = top.getContents().get(i).getPercentage();
+			
+		}
+	}
+	
+	private int [] dividOne(int X, int Y, int height, int width, double percentage, Boolean isOdd){
+		
+		if (isOdd){
+			int [] oneRectangle = {X, Y, height, (int) (width*percentage)};
+			return oneRectangle;
+		}else{
+			int [] oneRectangle = {X, Y, (int) (height*percentage), width};
+			return oneRectangle;
+		}
+	}
+	
+	
+	public ArrayList<int []> getData(){
+		
+		
+		return 
+	}
+	*/
+	public void runAlgorithm(){
+		System.out.println("123");
+		applyRule (0, 0, height, width, dataTree.getTop(), false);
+		
+	}
+	
+	
+	public void applyRule(int x, int y, int width, int height, Node node, boolean isOdd)
+	{
+		List<Node> children = ((Parent) node).getContents();
+		
+		for(Node child : children)
+		{
+			
+			if(isOdd)
+			{
+				width = (int) (width * child.getPercentage());		// width x node %
+				treeMap.addShape(new Rectangle(x, y, width, height));
+				treeMap.addShape(new Rectangle(x+1, y+1, width-2, height-2));
+				x += width;
+			}
+			else if(!isOdd)
+			{
+				height = (int) (height * child.getPercentage());
+				treeMap.addShape(new Rectangle(x, y, width, height));
+				treeMap.addShape(new Rectangle(x+1, y+1, width-2, height-2));
+					
+				y += height;
+			}
+			
+			if(child instanceof Parent)
+			{
+				applyRule(x, y, height, width, child, !(isOdd));
+			}
+		}
+	}
+	
+
+		
+		
+
+		/*
+		// Method 2: displaying a treemap by drawing borders
+		int startPosition = 0;
+		int numOfChildren = tree.getRootElement().getNumberOfChildren();
+		List<Node> children = tree.getRootElement().getChildren();
+		
+		Border[] borders = new Border[numOfChildren-1];
+		for(int i = 0; i < numOfChildren-1; i++) {
+			Node child = children.get(i);
+			startPosition += (int) (1000 * child.getRatio());
+			
+			borders[i] = new Border(startPosition, 0, 1, 500);
+			borders[i].makeVisible();
+
+		}
+		*/
+}
+	
+

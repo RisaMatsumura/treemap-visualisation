@@ -1,0 +1,123 @@
+package TreeMap;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+
+import javax.swing.JPanel;
+
+import view.ShapeInfoWindow;
+
+/**
+ * TreeMap contains an ArrayList {@link #listOfShapes} of {@link Shape} objects in each layer:
+ * it adds an {{@link Shape} object, and paint a graphical representation of each {@link Shape} object
+ * stored in {@link #listOfShapes}.
+ * 
+ * @author Louis
+ * @version
+ */
+public class TreeMap extends JPanel
+{
+	private ArrayList<ArrayList<Shape>> listOfShapes;
+	private ShapeInfoWindow infoWindow;
+	
+	
+
+	/**
+	 * Create a treemap object with an ArrayList {@link #listOfShapes},
+	 * the default background colour, and the default size.
+	 */
+	public TreeMap()
+	{
+		super();
+		
+		listOfShapes = new ArrayList<ArrayList<Shape>>();
+        this.setBackground(Color.BLACK);
+        this.setPreferredSize(new Dimension(670, 354));
+	}
+	
+	
+	/**
+	 * add shape into an ArrayList {@link #listOfShapes}.
+	 * @param layer a number representing the layer of the shape object to be added
+	 * @param theShape a {@link Shape} object to be added
+	 */
+	public void addShape(int layer, Shape theShape)
+	{
+		if(layer >= listOfShapes.size())
+		{
+			for(int i = 0; i <= layer; i++)
+			{
+				listOfShapes.add(new ArrayList<Shape>());
+			}
+		}
+		listOfShapes.get(layer).add(theShape);
+	}
+	
+	
+	/**
+	 * Draw shapes based on values of each shape stored in an ArrayList {@link #listOfShapes}.
+	 */
+	public void paintComponent(Graphics g)
+	{
+		super.paintComponent(g);
+		
+		for (int i = 0 ; i<listOfShapes.size(); i++)
+		{
+			for (int j = 0; j<listOfShapes.get(i).size(); j++)
+			{
+				Rectangle current = (Rectangle) listOfShapes.get(i).get(j);
+				int height = current.getHeight();
+				int width = current.getWidth();
+				int x = current.getX();
+				int y = current.getY();
+				
+				int value = 30*i;
+				
+				g.setColor(new Color(value, value, value));
+				g.fillRect(x, y, width, height);
+			}
+		}
+	}
+	
+
+	/**
+	 * Return the treemap object
+	 * @return <code>Treemap</code> this treemap object
+	 */
+	public TreeMap get()
+	{
+		return this;
+	}
+	
+	
+	/**
+	 * Returns a list of shapes of this treemap object
+	 * @return <code>ArrayList<ArrayList<Shape>></code> a nested list of shapes 
+	 */
+	public ArrayList<ArrayList<Shape>> getListOfShapes()
+	{
+		return listOfShapes;
+	}
+	
+	
+	public void getShapeInfoWindow(MouseEvent e)
+	{
+		String string = "";
+		
+		for(ArrayList<Shape> shapes : listOfShapes)
+		{
+			for(Shape shape : shapes)
+			{
+				if(shape.contains(e.getX(), e.getY()))
+				{
+					string = "Location: " + shape.getLoc() + ", Size: " + shape.getLocSize();
+				}
+			}
+		}
+		System.out.println(string);
+		infoWindow = new ShapeInfoWindow(string);
+	}
+}

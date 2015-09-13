@@ -1,0 +1,140 @@
+package model;
+
+import static org.junit.Assert.*;
+
+import java.io.File;
+import java.net.URL;
+import java.util.ArrayList;
+
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * 
+ * @author Risa Matsumura
+ *
+ */
+public class TestDataTree {
+	private static File file;
+	private DataTree dt;
+	
+	ArrayList<Node> grandparents, parents1, parents2, children1, children2, children3, children4;
+	Parent root, gp1, gp2, p1, p2, p3, p4;
+	Child c1, c2, c3, c4, c5, c6, c7, c8;
+	
+	@Before
+	public void setUp() throws Exception {
+		file = new File("TestDirectory");
+		dt = DataTree.getInstance(file);
+		
+		
+		root = dt.getTop();
+		grandparents = root.getContents();
+		gp1 = (Parent) grandparents.get(0);
+		gp2 = (Parent) grandparents.get(1);
+		
+		parents1 = gp1.getContents();
+		parents2 = gp2.getContents();
+		p1 = (Parent) parents1.get(0);
+		p2 = (Parent) parents1.get(1);
+		p3 = (Parent) parents2.get(0);
+		p4 = (Parent) parents2.get(1);
+		
+		children1 = p1.getContents();
+		children2 = p2.getContents();
+		children3 = p3.getContents();
+		children4 = p4.getContents();
+		c1 = (Child) children1.get(0);
+		c2 = (Child) children1.get(1);
+		c3 = (Child) children2.get(0);
+		c4 = (Child) children2.get(1);
+		c5 = (Child) children3.get(0);
+		c6 = (Child) children3.get(1);
+		c7 = (Child) children4.get(0);
+		c8 = (Child) children4.get(1);
+	}
+
+	/**
+	 *  Check if it the test file is working
+	 */
+	@Test
+	public void testFileName() {
+		assertEquals(file.getName(), "TestDirectory");
+		assertEquals(dt.getTop().getName(), "TestDirectory");
+
+	}
+	
+	/**
+	 *  Check if it counts the number of folders correctly
+	 */
+	@Test
+	public void testNumberOfFolders() {
+		assertEquals(dt.getNumberOfFiles(), 8);
+	}
+	
+	/**
+	 *  Check if it counts the number of files correctly
+	 */
+	public void testGetNumberOfFiles()
+	{
+		assertEquals(dt.getNumberOfFolders(), 6);
+	}
+	
+	/**
+	 *  Check if the depth of each node in the directory is set up correctly
+	 */
+	@Test
+	public void testDepth() {
+		assertEquals(root.getDepth(), 0);
+		assertEquals(gp1.getDepth(), 1);
+		assertEquals(gp2.getDepth(), 1);
+		assertEquals(p1.getDepth(), 2);
+		assertEquals(p2.getDepth(), 2);
+		assertEquals(p3.getDepth(), 2);
+		assertEquals(p4.getDepth(), 2);
+		assertEquals(c1.getDepth(), 3);
+		assertEquals(c2.getDepth(), 3);
+		assertEquals(c3.getDepth(), 3);
+		assertEquals(c4.getDepth(), 3);
+		assertEquals(c5.getDepth(), 3);
+		assertEquals(c6.getDepth(), 3);
+		assertEquals(c7.getDepth(), 3);
+		assertEquals(c8.getDepth(), 3);
+
+	}
+	
+	@Test
+	public void testPrintAllData() {
+		assertEquals(dt.printAllData(), 
+			"-gp1 (4096)0.5 1\n" +
+					"-	-p1 (2048)0.5 2\n" +
+						"-	-	-c1.docx (1024)0.5 3\n" +
+						"-	-	-c2.js (1024)0.5 3\n" +
+					"-	-p2 (2048)0.5 2\n" +
+						"-	-	-c3.mp3 (1024)0.5 3\n" +
+						"-	-	-c4.php (1024)0.5 3\n" +
+			"-gp2 (4096)0.5 1\n" +
+					"-	-p3 (2048)0.5 2\n" +
+						"-	-	-c5.wmv (1024)0.5 3\n" +
+						"-	-	-c6.xls (1024)0.5 3\n" +
+					"-	-p4 (2048)0.5 2\n" +
+						"-	-	-c7.sh (1024)0.5 3\n" +
+						"-	-	-c8.xml (1024)0.5 3\n");
+	}
+	
+	/**
+	 *  Check if it gets root folder size correctly
+	 */
+	@Test
+	public void testGetRootFolderSize() {
+		assertEquals(dt.getRootFolderSize(), "8 KB");
+	}
+	
+	/**
+	 * 
+	 */
+	@Test
+	public void testGetInstance() {
+
+	}
+}

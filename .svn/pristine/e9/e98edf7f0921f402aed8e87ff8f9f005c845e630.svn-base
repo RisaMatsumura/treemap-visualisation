@@ -1,0 +1,114 @@
+package model;
+/**
+ * Represents the Node of the DataTree.
+ * @author Jonas Pikiotas
+ * @author Lai Chin Chung Louis
+ * @version 1.0 
+ */
+public abstract class Node implements Comparable<Node>{
+
+	protected String name;
+	protected long size;
+	protected boolean isParent;
+	protected double percentage;
+	protected int depth;
+	
+	/**
+	 * Default constructor to create instance of Node
+	 * @param name instance of String
+	 * @param size type of long
+	 * @param isParent whether the node is parent or not.
+	 */
+	protected Node(String name, long size, boolean isParent) {
+		this.name = name;
+		this.size = size;
+		this.isParent = isParent;
+		this.depth = 1;
+	}
+
+	/**
+	 * 
+	 * @return the name of the instance of Node
+	 */
+	public String getName(){
+		return name;
+	}
+	
+	public void setDepth(int depth) {
+		this.depth = depth;
+	}
+	
+	public int getDepth() {
+		return depth;
+	}
+	
+	public void setDepthOfDescendants(Node node, int level) {
+		Node currentNode = node;
+		currentNode.setDepth(level);
+		
+		if (currentNode instanceof Parent) {
+			Parent currentParent = (Parent) currentNode;
+			int numberOfChildren = currentParent.getNumberOfChildren();
+			
+			if (numberOfChildren > 0) {
+				for(Node child : currentParent.getContents()) {
+					setDepthOfDescendants(child, level+1);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 
+	 * @return the size of the instance of Node
+	 */
+	abstract public long getSize();
+	
+	/**
+	 * 
+	 * @return whether the instance of Node is a Parent
+	 */
+	public boolean isParent(){
+		return isParent;
+	}
+	
+	/**
+	 * Returns the object as a String
+	 */
+	abstract public String toString();
+	
+	/**
+	 * to compare Nodes
+	 */
+	public int compareTo(Node other){
+		int result;
+		//bigger than is -1 to reverse the result of the Collections.sort in Java
+		if (this.getSize() > other.getSize()){
+			result = -1;
+		}else if (this.getSize() < other.getSize()){
+			result = 1;
+		}else{
+			result = 0;
+		}
+		return result;
+		
+	}
+	
+	/**
+	 * 
+	 * @return the name of the instance of Node
+	 */
+	public void setPercentage(double percentage){
+		this.percentage = percentage;
+	}
+	
+	/**
+	 * 
+	 * @return the name of the instance of Node
+	 */
+	public double getPercentage(){
+		return percentage;
+	}
+	
+}
+

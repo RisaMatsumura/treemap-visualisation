@@ -1,0 +1,33 @@
+package Utility;
+import java.io.File;
+
+import Model.*;
+
+public class Controller {
+
+	//private Algorithm algorithm;
+	private DataTree dataTree;
+	
+	public Controller(File root){
+		dataTree = DataTree.getInstance(root);
+	}
+	
+	
+	
+	public void setAlgorithm(Algorithm a){
+		//algorithm = a;
+	}
+	
+	public void runAlgorithm(){
+		
+	}
+	
+	public void buildTreeMap(){
+		
+	}
+	
+	public DataTree getDataTree(){
+		return dataTree;
+	}
+	
+}
